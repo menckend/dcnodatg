@@ -98,6 +98,34 @@ def get_switch_data(switch: str, uname: str, passw: str) -> tuple[list, list, li
     # Return our results
     return(this_sw_vals, this_sw_lldpnbrs, this_sw_cfg)
 
+def count_ether_interfaces(tmp_switch_config: list) -> int:
+    """Accept a list of lines representing a switch config and return the number of Ethernet interfaces the corresponding cEOS container will need
+
+    Parameters
+    ---------
+    tmp_switch_config : list
+        List of lines of a switch's configuration
+
+    Returns
+    -------
+    this_sw_intf_count : int
+        The number of Ethernet interfaces the cEOS container version of the switch will\
+         need
+    """    
+    my_ethercount = 0
+    for line in tmp_switch_config:
+        # We're only counting single interfaces (not the breakout interfaces)
+        if (line.startswith('interface Ethernet') and (not (line.endswith('/2') or 
+                                                            line.endswith('/3') or 
+                                                            line.endswith('/4')))):
+            my_ethercount+=1
+    return(my_ethercount)
+
+
+
+
+
+
 def main(**kwargs):
     """Pull switch run-state data, massage it, and turn it into a GNS3 lab
 
@@ -222,14 +250,9 @@ the production switches: ')
 
     # Get the number of ethernet interfaces from each switch's config and store for l8r
     for switchct in range(len(switchlist)):
-        ifcount = 0
-        for line in allconfigs[switchct]:
-            # We're only counting single interfaces (not the breakout interfaces)
-            if (line.startswith('interface Ethernet') and (not (line.endswith('/2') or 
-                                                                line.endswith('/3') or 
-                                                                line.endswith('/4')))):
-                ifcount+=1
-        switch_vals[switchct].append(str(ifcount))
+        ether_count = count_ether_interfaces(allconfigs[switchct])
+        switch_vals[switchct].append(ether_count)
+
 
     # Loop through all those configs and clean them up
 
