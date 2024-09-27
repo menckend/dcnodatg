@@ -6,7 +6,10 @@
    Code Documentation <_autosummary/dcnodatg>
 
 
-Data Center Network On Demand
+Data Center Network On Demand: Arista to GNS3
 =============================
 
-A python utility for grabbing run-state details from a list of Arista switches and converting them to a GNS3 virtual-lab topology using cEOS images.
+.. include:: ../pyproject.toml
+  :parser: sphinx_pyproject
+
+

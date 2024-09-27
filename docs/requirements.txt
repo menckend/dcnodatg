@@ -10,3 +10,4 @@ sphinx_mdinclude
 sphinx_autodoc_typehints
 python-docs-theme
 docker
+sphinx-pyproject

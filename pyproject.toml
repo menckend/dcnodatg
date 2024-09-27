@@ -2,7 +2,7 @@
 
 dynamic = ["version"]
 name = "dcnodatg"
-description = "Data Center on Demand - Arista to GNS3"
+description = "Data Center Network on Demand: Arista to GNS3"
 
 authors = [
   {name = "Mencken Davidson", email = "mencken@gmail.com"},
