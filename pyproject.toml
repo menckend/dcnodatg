@@ -1,8 +1,17 @@
+[build-system]
+
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+
+
 [project]
 
 dynamic = ["version"]
 name = "dcnodatg"
 description = "Gets run-state details from a Arista switches and build a GNS3 virtual-lab to emulate them."
+
+[tool.setuptools_scm]
 
 authors = [
   {name = "Mencken Davidson", email = "mencken@gmail.com"},
