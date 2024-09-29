@@ -1,2 +1,6 @@
 pyeapi
 docker
+tarfile
+getpass
+io
+requests
