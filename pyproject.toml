@@ -7,9 +7,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 #where = ["."]
-include = ["dcnodatg*"]
+#include = ["dcnodatg*"]
 #include = ["src*"]
-exclude = [".venv*", "tests*", "docs*"]
+#exclude = [".venv*", "tests*", "docs*"]
 
 [project]
 name = "dcnodatg"
