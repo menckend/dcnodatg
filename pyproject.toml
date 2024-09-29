@@ -3,13 +3,14 @@ requires = ["setuptools>=64", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
+version_file = "dcnodatg/_version.py"
 #version_scheme : str | Callable[[ScmVersion], str]
 
 [tool.setuptools.packages.find]
 #where = ["."]
-include = ["dcnodatg*"]
+#include = ["dcnodatg*"]
 #include = ["src*"]
-exclude = [".venv*", "tests*", "docs*", ".github*", ".gitignore"]
+#exclude = [".venv*", "tests*", "docs*", ".github*", ".gitignore"]
 
 
 [project]
