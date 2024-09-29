@@ -152,7 +152,7 @@ The arguments can be entered in any order, separate by a space.  Examples of eac
 username= 'mynameismud'
 passwd= 'mypasswordisalsomud'
 servername= 'gns3server.menckend.com'
-switchlist= '["sw1.menckend.com", "sw2.menckend.com", "sw3.menckend.com]
+switchlist= 'sw1.menckend.com sw2.menckend.com sw3.menckend.com'
 filename= './switchlist.txt'
 prjname= 'dcnodatg-project-dujour'
 ```
@@ -162,7 +162,7 @@ Remember that the switchlist and filename arguments are mutually exclusive, if y
 An example of a fully-argumented invocation would be:
 
 ```bash
-./dcnodatg.py username='me' passwd='mypasswordisweak' servername='gns3server.com' switchlist='["sw1.us.com", "sw2.us.com"] prjname='mynewproject'
+python ./dcnodatg.py username='fakeid' passwd='b@dp@ssw0rd' servername='gn3server.com' prjname='giveitanme' switchlist='switch1 switch2 switch3'
 ```
 
 ##### As a Python module
@@ -176,7 +176,7 @@ sn='gns3server.bibbity.bobbity.boo'
 un='myuserid'
 pw='weakpassword'
 prjn='new-gns3-project-today'
-sl='["switch1.internal", "switch15.internal", "switch1.menckend.com"]'
+sl=['switch1.internal', 'switch15.internal', 'switch1.menckend.com']
 
 dcnodatg.main(username=sn, passwd=pw, servername=sn, switchlist=sl, prjname=prjn)
 ```
