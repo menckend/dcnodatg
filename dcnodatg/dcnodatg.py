@@ -10,8 +10,8 @@ import requests
 
 """dcnodatg module/script
 
-This script gathers and parses run-state details from a list of Arista 
-network switches.  It then creates a GNS3 virtual-lab project in which the 
+This script gathers and parses run-state details from a list of Arista
+network switches.  It then creates a GNS3 virtual-lab project in which the
 interrogated devices are emulated."""
 
 
@@ -26,7 +26,7 @@ def read_file(file_to_read: str) -> list:
     # Open the file in read mode
     opened_file = open(file_to_read, "r")
     # Each line of the file into an entry in a list called list_of_lines
-    list_of_lines = opened_file.read().splitlines() 
+    list_of_lines = opened_file.read().splitlines()
     # Close the file that was being read
     opened_file.close()
     return list_of_lines
@@ -73,12 +73,12 @@ def get_switch_data(switch: str, uname: str, passw: str) -> tuple[list, list, li
     # Clear any existing pyeapi.client.config
     pyeapi.client.config.clear()
     # Build the pyeapi.client.config object required for connecting to the switch
-    pyeapi.client.config.add_connection(switch, host=switch, transport='https', 
+    pyeapi.client.config.add_connection(switch, host=switch, transport='https',
                                         username=uname, password=passw)
     # Connect to the switch
     node = pyeapi.connect_to(switch)
     # Get JSON-formatted results of several 'show...' commands
-    eos_output = node.enable(("show version", "show lldp neighbors", 
+    eos_output = node.enable(("show version", "show lldp neighbors",
                              "show lldp local-info"), format="json")
     # Pluck the specific bits out data we want from the "show" cmds' output
     eos_output_model = eos_output[0]["result"]["modelName"]
@@ -87,13 +87,13 @@ def get_switch_data(switch: str, uname: str, passw: str) -> tuple[list, list, li
     eos_output_serial = eos_output[0]["result"]["serialNumber"]
     eos_output_lldpName = eos_output[2]["result"]["systemName"]
     # Create this_switch_data list to return
-    this_sw_vals = ([switch, eos_output_model, eos_output_ver, eos_output_mac, 
+    this_sw_vals = ([switch, eos_output_model, eos_output_ver, eos_output_mac,
                     eos_output_serial, eos_output_lldpName])
     # Create this_sw_lldpnbrs list to return
     this_sw_lldpnbrs = []
     for count, value in enumerate(eos_output[1]["result"]["lldpNeighbors"]):
-        this_sw_lldpnbrs.append([str(eos_output_lldpName), str(value["port"]), 
-                                 str(value["neighborDevice"]), 
+        this_sw_lldpnbrs.append([str(eos_output_lldpName), str(value["port"]),
+                                 str(value["neighborDevice"]),
                                  str(value["neighborPort"])])
     # Create this_sw_cfg list to return
     this_sw_cfg = []
@@ -115,12 +115,12 @@ def count_ether_interfaces(tmp_switch_config: list) -> int:
     this_sw_intf_count : int
         The number of Ethernet interfaces the cEOS container version of the switch will\
          need
-    """    
+    """
     my_ethercount = 0
     for line in tmp_switch_config:
         # We're only counting single interfaces (not the breakout interfaces)
-        if (line.startswith('interface Ethernet') and (not (line.endswith('/2') or 
-                                                            line.endswith('/3') or 
+        if (line.startswith('interface Ethernet') and (not (line.endswith('/2') or
+                                                            line.endswith('/3') or
                                                             line.endswith('/4')))):
             my_ethercount += 1
     return (my_ethercount)
@@ -184,7 +184,7 @@ def main(**kwargs):
     servername = ''
     prj_name = ''
 
-    # Pull any expected (and received) arguments from kwargs into their recipient 
+    # Pull any expected (and received) arguments from kwargs into their recipient
     # objects
     if 'filename' in kwargs:
         filename = kwargs['filename']
@@ -242,7 +242,7 @@ the production switches: ')
         print("   Switch  ",  c,  " of ", switchcount, "(", s, ")", end="\n")
         c += 1
         # Get the switch's data
-        that_sw_vals, that_sw_lldpnbrs, that_sw_cfg = get_switch_data(s, username, 
+        that_sw_vals, that_sw_lldpnbrs, that_sw_cfg = get_switch_data(s, username,
                                                                       passwd)
         # Push switch's data into the list of all switches' data
         switch_vals.append(that_sw_vals)
@@ -259,8 +259,8 @@ the production switches: ')
 
     # List of global-config commands that we should comment out for cEOS compatibility
     # and lab environments in general
-    badstarts = ['radius', 'username', 'aaa', 'ip radius', 'hardware speed', 'queue', 
-                 'server 10.207.200.82', 'ip radius', 'ntp server', 
+    badstarts = ['radius', 'username', 'aaa', 'ip radius', 'hardware speed', 'queue',
+                 'server 10.207.200.82', 'ip radius', 'ntp server',
                  'daemon TerminAttr', '   exec /usr/bin/TerminAttr']
 
     # get rid of commands we don't want in the EOS configs for the cEOS lab
@@ -268,13 +268,13 @@ the production switches: ')
         for linect in range(len(allconfigs[switchct])):
             for oopsie in badstarts:
                 if allconfigs[switchct][linect].startswith(oopsie):
-                    # Can't just delete the un-wanted lines, that would screw up 
+                    # Can't just delete the un-wanted lines, that would screw up
                     # the iteration through the list. Better to just prepend with a '!'
                     allconfigs[switchct][linect] = "!removed_for_cEOS-lab| " + \
                         allconfigs[switchct][linect]
 
     # Get rid of '...netN/2|3|4' interface config sections altogether
-    # (can't have them getting converted to ../netN and their vestigial config 
+    # (can't have them getting converted to ../netN and their vestigial config
     # overwriting the actual interface config
     spurious_interface = False
     # Loop through all of the switches
@@ -284,14 +284,14 @@ the production switches: ')
             # Check to see if the current config line is a 'spurious' interface
             spurious_interface = (allconfigs[switchct][linect].startswith(
                 'interface Ethernet') and ('/2' in allconfigs[switchct][linect] or '/3'
-                                           in allconfigs[switchct][linect] or '/4' in 
+                                           in allconfigs[switchct][linect] or '/4' in
                                            allconfigs[switchct][linect]))
             if spurious_interface:
-                # Loop through the lines in the spurious interface's config section 
+                # Loop through the lines in the spurious interface's config section
                 # and comment them out by prepending with '!'
                 next_sec = False
                 shortcount = linect
-                # Stop commenting out lines when we get to the end of the config 
+                # Stop commenting out lines when we get to the end of the config
                 # section (marked by a line consisting of '!')
                 next_sec = False
                 while not next_sec:
@@ -324,7 +324,7 @@ the production switches: ')
                 'Management1', 'Ethernet' + mgt_port_str)
 
     # Add a new section to the end of each switch's configuration to
-    # emulate the system mac address of the production device  (required for MLAG 
+    # emulate the system mac address of the production device  (required for MLAG
     # functionality due to docker container default mac address have U/L bit set to L.)
 
     # Creating list for system mac config snippet
@@ -339,7 +339,7 @@ the production switches: ')
     # Loop through each switch's config in allconfigs
     # Removing the last line ('end') and appending the system_mac_config snippet
     # (with the REAL switch's MAC address) before adding the final 'end' back
-    # This will help our lab switches look more like the prod switches, but will 
+    # This will help our lab switches look more like the prod switches, but will
     # also work around the system-mac MLAG bug on cEOS
     for config in range(len(allconfigs)):
         poppedline = allconfigs[config].pop(len(allconfigs[config])-1)
@@ -355,10 +355,10 @@ the production switches: ')
         our_lldp_ids.append(switch_vals[sw_cnt][5])
 
     # Sanitize connections_to_make list; removing any entries in which either end
-    # is NOT one of our switches  (we can't tell GNS3 to create a connection to a 
+    # is NOT one of our switches  (we can't tell GNS3 to create a connection to a
     # node that doesn't exist in the project.)
-    connections_to_make[:] = [connx for connx in connections_to_make if 
-                              list_search(our_lldp_ids, connx[0]) and 
+    connections_to_make[:] = [connx for connx in connections_to_make if
+                              list_search(our_lldp_ids, connx[0]) and
                               list_search(our_lldp_ids, connx[2])]
 
     # Remove A|B-inverted entries in connections_to_make
@@ -368,8 +368,8 @@ the production switches: ')
             if i[2]+i[3] == j[0]+j[1]:
                 connections_to_make.remove(j)
 
-    # Clean up "management1" in the connections_to_make list (using the highest 
-    # available ethernet interface instead (we added an extra interface to each 
+    # Clean up "management1" in the connections_to_make list (using the highest
+    # available ethernet interface instead (we added an extra interface to each
     # node when we created it and later in the allconfigs table)
     for cn_cnt in range(len(connections_to_make)):
         connections_to_make[cn_cnt][1] = connections_to_make[cn_cnt][1].lower()
@@ -377,26 +377,26 @@ the production switches: ')
         if connections_to_make[cn_cnt][1] == 'management1':
             for sw_cnt in range(len(switch_vals)):
                 if connections_to_make[cn_cnt][0] == switch_vals[sw_cnt][5]:
-                    connections_to_make[cn_cnt][1] = 'ethernet' + str( 
+                    connections_to_make[cn_cnt][1] = 'ethernet' + str(
                         int(switch_vals[sw_cnt][6]) + 1)
         if connections_to_make[cn_cnt][3] == 'management1':
             for switch in range(len(switch_vals)):
                 if connections_to_make[cn_cnt][2] == switch_vals[sw_cnt][5]:
-                    connections_to_make[cn_cnt][3] = 'ethernet' + str( 
+                    connections_to_make[cn_cnt][3] = 'ethernet' + str(
                         int(switch_vals[sw_cnt][6]) + 1)
 
     # Set GNS3 URL
     gns3_url = 'http://'+servername+':3080/v2/'
 
-    # Get all of the docker image templates from the GNS3 server so we can figure out 
-    # which template_id value maps to a specific EOS version when we start building 
+    # Get all of the docker image templates from the GNS3 server so we can figure out
+    # which template_id value maps to a specific EOS version when we start building
     # our instances
     r = requests.get(gns3_url + 'templates')
     for x in r.json():
         if x['template_type'] == 'docker':
             image_map.append([x['template_id'], x['image']])
 
-    # Loop through image_map while looping through switch_vals, looking for imag_map 
+    # Loop through image_map while looping through switch_vals, looking for imag_map
     # names that are good matches for the EOS version data captured in switch_vals,
     #  and appending each entry in switch_status with the GNS3 template_id from the
     #  matching entry in image_map
@@ -435,8 +435,8 @@ the production switches: ')
         switch_vals[linecount].append(newnodeoutput.json()['node_id'])
         switch_vals[linecount].append(newnodeoutput.json()['properties']
                                       ['container_id'])
-        node_chg_name_response = requests.put(gns3_url + 'projects' + '/' + 
-                                              gnsprj_response.json()['project_id'] + 
+        node_chg_name_response = requests.put(gns3_url + 'projects' + '/' +
+                                              gnsprj_response.json()['project_id'] +
                                               '/nodes/' + newnodeoutput.json()
                                               ['node_id'], json={'name': switch_vals
                                                                  [linecount][0].split
@@ -468,10 +468,10 @@ the production switches: ')
         b_node_adapter_nbr = int(connections_to_make[cn_cnt][3].split('/')[0].split
                                  ('ethernet')[1])
         cnx_crt_rspns = requests.post(gns3_url + 'projects/' + gnsprj_response.json()
-                                      ['project_id'] + '/links', json={"nodes": 
+                                      ['project_id'] + '/links', json={"nodes":
                                       [{"adapter_number": a_node_adapter_nbr, "node_id":
                                        a_node_id, "port_number":
-                                       0}, {"adapter_number": b_node_adapter_nbr, 
+                                       0}, {"adapter_number": b_node_adapter_nbr,
                                        "node_id": b_node_id, "port_number": 0}]})
         print("   Connection  ",  c,  " of ", len(connections_to_make), end="\r")
         c += 1
@@ -501,7 +501,7 @@ the production switches: ')
         # Tell GNS3 to start the node that represents the current switch
         # using GNS3 API so the persistent volumes get mounted when the container is run
         gnsrsp = requests.post(gns3_url + 'projects/' + gnsprj_response.json()
-                               ['project_id']+'/nodes/' + switch_vals[sw_c][8] + 
+                               ['project_id']+'/nodes/' + switch_vals[sw_c][8] +
                                '/start')
 
         # Rebuild the switch-config (allconfigs[sw_c]) from its current state as a
