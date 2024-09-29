@@ -1,0 +1,11 @@
+LICENSE.md
+README.md
+pyproject.toml
+setup.py
+dcnodatg/__init__.py
+dcnodatg/dcnodatg.py
+dcnodatg.egg-info/PKG-INFO
+dcnodatg.egg-info/SOURCES.txt
+dcnodatg.egg-info/dependency_links.txt
+dcnodatg.egg-info/top_level.txt
+tests/test_vdcnod.py
