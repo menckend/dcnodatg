@@ -15,10 +15,9 @@ jobs:
       run: >-
         python3 -m
         pip install
-        python -m build --sdist --wheel .
         --user
     - name: Build a binary wheel and a source tarball
-      run: python3 -m build
+      run: python -m build --sdist --wheel .
     - name: Store the distribution packages
       uses: actions/upload-artifact@v4
       with:
