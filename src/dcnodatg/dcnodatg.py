@@ -1,4 +1,3 @@
-# dcnodatg
 import sys
 import tarfile
 from getpass import getpass
