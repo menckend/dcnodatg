@@ -18,7 +18,7 @@ jobs:
         build
         --user
     - name: Build a binary wheel and a source tarball
-      run: python -m build --sdist --wheel --outdir dist/
+      run: python -m build --sdist --wheel .
     - name: Store the distribution packages
       uses: actions/upload-artifact@v4
       with:
@@ -99,7 +99,7 @@ jobs:
 
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/<package-name>
+      url: https://test.pypi.org/p/dcnodatg
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
@@ -114,5 +114,3 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
-
-
