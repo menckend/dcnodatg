@@ -1,6 +1,6 @@
 # Preamble
 
-I wrote this specifically to assist in *fast* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.
+I wrote this specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.
 
 Documentation at: [https://menckend.github.io/dcnodatg/](https://menckend.github.io/dcnodatg/)
 
