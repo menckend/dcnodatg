@@ -10,7 +10,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.x"
+        python-version: "3.12"
     - name: Install pypa/build
       run: >-
         python3 -m
@@ -27,8 +27,9 @@ jobs:
 
   publish-to-pypi:
     name: >-
-      Publish Python 🐍 distribution 📦 to PyPI
-    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+      Publish Python istribution to PyPI
+    #if: startsWith(github.ref, 'refs/tags/') # only publish to PyPI on tag pushes
+    if: startsWith(github.ref, 'nevermatch')
 
     needs:
     - build
@@ -92,8 +93,8 @@ jobs:
         --repo '${{ github.repository }}'
 
   publish-to-testpypi:
-    #if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
-     if: startsWith(github.ref, 'refs/nevermatch')  # don't publish
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+
     name: Publish Python 🐍 distribution 📦 to TestPyPI
     needs:
     - build
