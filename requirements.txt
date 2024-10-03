@@ -6,4 +6,3 @@ BytesIO
 tarfile
 requests
 aiohttp
-docker
