@@ -34,7 +34,7 @@ Repository at: [https://github.com/menckend/dcnodatg](https://github.com/mencken
 
 ### Python
 
-- The dcnodatg module was written using Python 3.12.  I haven't tested it with any other versions.
+- The dcnodatg project was written using Python 3.12.  I haven't tested it with any other versions.
 - The host running the dcnodat module will need the pyeapi and docker python packages installed
   - 'pip install pyeapi'
   - 'pip install docker'
@@ -108,6 +108,8 @@ dcnodatg uses the following arguments (passed as keyword pairs):
 
 #### As a Python script
 
+You'll need to install dcnodatg with pip or find some other way to make the gns3_worker.py module accessible to your interpreter.
+
 ##### To run interactively
 
 Enter:
@@ -178,5 +180,5 @@ pw='weakpassword'
 prjn='new-gns3-project-today'
 sl=['switch1.internal', 'switch15.internal', 'switch1.menckend.com']
 
-dcnodatg.main(username=sn, passwd=pw, servername=sn, switchlist=sl, prjname=prjn)
+dcnodatg.p_to_v(username=sn, passwd=pw, servername=sn, switchlist=sl, prjname=prjn)
 ```
