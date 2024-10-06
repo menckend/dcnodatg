@@ -10,6 +10,7 @@ from getpass import getpass
 import pyeapi
 import requests
 import gns3_worker
+import eos_poller
 
 
 def read_file(file_to_read: str) -> list:
@@ -39,8 +40,8 @@ def list_search(list_to_search: list, item_to_find: str) -> bool:
     item_to_find : str
         The item to search for
     """
-    for i in range(len(list_to_search)):
-        if list_to_search[i] == item_to_find:
+    for val in list_to_search:
+        if val == item_to_find:
             return True
     return False
 
@@ -76,7 +77,7 @@ def get_switch_data(switch: str, uname: str, passw: str) -> tuple[list, list, li
     node = pyeapi.connect_to(switch)
     # Get JSON-formatted results of several 'show...' commands
     eos_output = node.enable(("show version", "show lldp neighbors",
-                             "show lldp local-info"), format="json")
+                              "show lldp local-info"), format="json")
     # Pluck the specific bits out data we want from the "show" cmds' output
     eos_output_model = eos_output[0]["result"]["modelName"]
     eos_output_ver = eos_output[0]["result"]["version"]
@@ -88,7 +89,7 @@ def get_switch_data(switch: str, uname: str, passw: str) -> tuple[list, list, li
                     eos_output_serial, eos_output_lldpname, '', '', '', '', '', ''])
     # Create this_sw_lldpnbrs list to return
     this_sw_lldpnbrs = []
-    for count, value in enumerate(eos_output[1]["result"]["lldpNeighbors"]):
+    for value in eos_output[1]["result"]["lldpNeighbors"]:
         this_sw_lldpnbrs.append([str(eos_output_lldpname), str(value["port"]),
                                  str(value["neighborDevice"]),
                                  str(value["neighborPort"])])
@@ -165,17 +166,15 @@ def arista_ceos_sanitizer(sw_config_in: list, ether_count_in: int, system_mac_in
     mgt_port_str = str(mgt_port_int)
 
     # Loop through the lines in each switch's configuration
-    for linect in range(len(sw_config_in)):
+    for linect, line in enumerate(sw_config_in):
         # Replace the Management1 interface name with an extra Ethernet interface
-        sw_config_in[linect] = sw_config_in[linect].replace(
-            'Management1', 'Ethernet' + mgt_port_str)
+        sw_config_in[linect] = line.replace('Management1', 'Ethernet' + mgt_port_str)
         # Eiminate config lines the begin with any of the "invalid_starts"
         for oopsie in badstarts:
             if sw_config_in[linect].startswith(oopsie):
                 # Can't just delete the un-wanted lines, that would screw up
                 # the iteration through the list. Better to just prepend with a '!'
-                sw_config_in[linect] = "!removed_for_cEOS-lab| " + \
-                    sw_config_in[linect]
+                sw_config_in[linect] = "!removed_for_cEOS-lab| " + sw_config_in[linect]
         # Get rid of '...netN/2|3|4' interface config sections altogether
         # (can't have them getting converted to ../netN and their vestigial config
         # overwriting the actual interface config
@@ -288,7 +287,7 @@ def p_to_v(**kwargs):
         servername = kwargs['servername']
     if 'prjname' in kwargs:
         prj_name = kwargs['prjname']
-    if 'run_type' in kwargs:
+    if 'runtype' in kwargs:
         run_type = kwargs['runtype']
     if (filename == '' and switchlist == []):
         print("Enter a switch name and press enter.")
@@ -298,7 +297,7 @@ def p_to_v(**kwargs):
             if not line:
                 break
             switchlist.append(line)
-    if (filename != '') and (switchlist != ''):
+    if (filename != '') and (switchlist != []):
         print("Don't pass both filename_arg AND switchlist_arg; choose one or the \
 other.")
         exit(1)
@@ -319,38 +318,22 @@ the production switches: ')
     if passwd == '':
         passwd = getpass('Enter password for Arista EOS login: ')
 
-    # Loop through all of the switches we've been asked to process and GET their data
-    switchcount = len(switchlist)
-    switch_vals = [None] * switchcount
-    c = 0
-    for s in switchlist:
-        if run_type == 'script':
-            print("Connecting to switches to grab config, EOS version, and lldp details:")
-            # Print progress/status message
-            print("   Switch  ",  c + 1,  " of ", switchcount, "(", s, ")", end="\r")
-        # Get the switch's data
-        that_sw_vals, that_sw_lldpnbrs, that_sw_cfg = get_switch_data(s, username,
-                                                                      passwd)
-        # Push switch's data into the list of all switches' data
-        switch_vals[c] = that_sw_vals
-        allconfigs.append(that_sw_cfg)
-        for that_lldp_nbr in that_sw_lldpnbrs:
-            connections_to_make.append(that_lldp_nbr)
-        c = c + 1
+    # Call eos_poller.invoker to poll the Arista switches
+    switch_vals, connections_to_make, allconfigs = eos_poller.invoker(switchlist,
+                                                                      username,
+                                                                      passwd, run_type)
     # Get the number of ethernet interfaces from each switch's config and store for l8r
-    for switchct in range(len(switchlist)):
-        ether_count = count_ether_interfaces(allconfigs[switchct])
-        switch_vals[switchct][6] = ether_count
+    for i, val in enumerate(switchlist):
+        ether_count = count_ether_interfaces(allconfigs[i])
+        switch_vals[i][6] = ether_count
 
     # Loop through all those configs and clean them up for life as a cEOS container
-    for switchct in range(len(switchlist)):
-        allconfigs[switchct] = arista_ceos_sanitizer(allconfigs[switchct], switch_vals
-                                                     [switchct][6], switch_vals
-                                                     [switchct][3])
+    for i, val in enumerate(allconfigs):
+        allconfigs[i] = arista_ceos_sanitizer(val, switch_vals[i][6], switch_vals[i][3])
     # Create a list of the LLDP local-IDs used by our switches
     our_lldp_ids = []
-    for sw_cnt in range(len(switch_vals)):
-        our_lldp_ids.append(switch_vals[sw_cnt][5])
+    for val in switch_vals:
+        our_lldp_ids.append(val[5])
 
     # Sanitize connections_to_make list; removing any entries in which either end
     # is NOT one of our switches  (we can't tell GNS3 to create a connection to a
@@ -369,19 +352,20 @@ the production switches: ')
     # Clean up "management1" in the connections_to_make list (using the highest
     # available ethernet interface instead (we added an extra interface to each
     # node when we created it and later in the allconfigs table)
-    for cn_cnt in range(len(connections_to_make)):
-        connections_to_make[cn_cnt][1] = connections_to_make[cn_cnt][1].lower()
-        connections_to_make[cn_cnt][3] = connections_to_make[cn_cnt][3].lower()
-        if connections_to_make[cn_cnt][1] == 'management1':
-            for sw_cnt in range(len(switch_vals)):
-                if connections_to_make[cn_cnt][0] == switch_vals[sw_cnt][5]:
-                    connections_to_make[cn_cnt][1] = 'ethernet' + str(
-                        int(switch_vals[sw_cnt][6]) + 1)
-        if connections_to_make[cn_cnt][3] == 'management1':
-            for switch in range(len(switch_vals)):
-                if connections_to_make[cn_cnt][2] == switch_vals[sw_cnt][5]:
-                    connections_to_make[cn_cnt][3] = 'ethernet' + str(
-                        int(switch_vals[sw_cnt][6]) + 1)
+
+    for i, val in enumerate(connections_to_make):
+        # connections_to_make[i][0] = val[0].lower()
+        connections_to_make[i][1] = val[1].lower()
+        # connections_to_make[i][2] = val[2].lower()
+        connections_to_make[i][3] = val[3].lower()
+        if val[1] == 'management1':
+            for j, val2 in enumerate(switch_vals):
+                if val[0] == val2[5]:
+                    connections_to_make[i][1] = 'ethernet' + str(int(val2[6]) + 1)
+        if val[3] == 'management1':
+            for j, val2 in enumerate(switch_vals):
+                if val[2] == val2[5]:
+                    connections_to_make[i][3] = 'ethernet' + str(int(val2[6]) + 1)
 
     # Set GNS3 URL
     gns3_url = 'http://'+servername+':3080/v2/'
@@ -410,8 +394,8 @@ the production switches: ')
     # templ_qry_resp = requests.get(gns3_url + 'templates')
 
     # Invoke function that handles node creation/configuration in GNS3 project
-    gns3output = gns3_worker.invoker(servername, gns3_url, switch_vals,
-                                        allconfigs, gnsprj_id)
+    gns3_worker.invoker(servername, gns3_url, switch_vals,
+                        allconfigs, gnsprj_id, connections_to_make)
     # Done!
     return 'GNS3 project URL is: ' + gns3_url + 'projects/' + gnsprj_id
 
@@ -427,5 +411,5 @@ if __name__ == '__main__':
             kwdict[splarg[0]] = splargalt
         else:
             kwdict[splarg[0]] = splarg[1]
-    kwdict['run_type'] = 'script'
+    kwdict['runtype'] = 'script'
     p_to_v(**kwdict)

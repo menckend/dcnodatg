@@ -1,51 +1,47 @@
 # Preamble
 
-I wrote this specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.
+I wrote this package (dcnodatg) specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.  (Also, to teach myself how to write/publish Python packages, but *really* for modeling Arista switches.)
 
 Documentation at: [https://menckend.github.io/dcnodatg/](https://menckend.github.io/dcnodatg/)
-
 Repository at: [https://github.com/menckend/dcnodatg](https://github.com/menckend/dcnodatg)
+Package at: [https://pypi.org/project/dcnodatg/](https://pypi.org/project/dcnodatg/)
 
 ## What it does
 
 - Grabs startup configuration, version info, and lldp neighbor information from a list of Arista switches
-- Uses Arista eAPI (credentials must be provided as arguments when running dcnodatg) to retrieve all data
+- Uses Arista eAPI (credentials must be provided as arguments) to retrieve all data
 - Sanitizes the switch configs for use in a cEOS environment
   - Removes all AAA and username configuration
   - Reformats interface names to match the cEOS interface naming convention  Ethernet_n , not Ethernt_n/1
   - Comments out incompatible commands ("queue..." not supported on cEOS)
-  - Configures a matching system mac-address to
+  - Configures the system mac-address of the production switch
     - Increase verisimilitude with prod device that is being modeled
-    - Avoid mLAG incompatibility with cEOS
-      - Docker container default mac address has U/L bit set to L instead of U
+    - Avoids mLAG incompatibility with cEOS
+      - Docker container default mac address has U/L bit set to L instead of U, which prevents MLAG from working
 - Builds a table of interconnections between the switches
-  - From the lldp neighbor and startup config data
+  - Inferred from the "show lldp neighbor" and "show lldp local" output
 - Creates a GNS3 project
-  - Creates models of all of the switches from it processed
-  - Modeled devices matches cEOS versioning, interface count, and system-mac-address
-- Creates the interconnects between all of the cEOS switches in the previous step
-- Pushes the startup-config of the production switch into /mnt/flash/startup-config of the virtual-switch
-  - Uses the docker client API's put_archive method to put the startup-config file in the container's root directory
-    - It's only possible to send to the "/" path for some reason.
-  - Uses the GNS API to start the node/container (which ensures that the /mnt/flash volume is mounted)
-  - Uses the docker client API's exec_create method to run the command:  "mv /startup-config /mnt/flash/startup-config"
+  - Instantiates a cEOS container node in the project for each switch in the input list
+  - Modeled devices mirror the following properties of the switches they are modeling:
+    -  cEOS version (a pre-existing GNS3 docker template using the matching cEOS version must be present) 
+    -  Ethernet interface count
+    -  system-mac-address
+    -  Startup configuration
+       -  "startup-config" is pushed from the dcnodatg package directly to the containerd service on the GNS3 server
+          -  Avoiding the need for dcnodatg to run *on* the gns3 server
+  - Creates the connections between the GNS3/cEOS nodes, mirroring all inter-switch connections discovered in LLDP tables
 
 ## Requirements
 
 ### Python
 
 - The dcnodatg project was written using Python 3.12.  I haven't tested it with any other versions.
-- The host running the dcnodat module will need the pyeapi and docker python packages installed
-  - 'pip install pyeapi'
-  - 'pip install docker'
+- The host running the dcnodat module will need to have Python and the packages listed in requirements.txt installed
 
-If you want to invoke dcnodatg programmatically as a python module, install it with pip:
+If you want to invoke dcnodatg programmatically as a python module:
 
-- 'pip install dcnodatg'
-
-And import it into your python project:
-
-- 'import dcnodatg'
+- install it with pip:
+  - 'pip install dcnodatg'
 
 ### GNS3 server
 
@@ -108,7 +104,7 @@ dcnodatg uses the following arguments (passed as keyword pairs):
 
 #### As a Python script
 
-You'll need to install dcnodatg with pip or find some other way to make the gns3_worker.py module accessible to your interpreter.
+You'll need to install dcnodatg with pip or find some other way to make the modules in dcnodatg accessible to your interpreter.  When run as a script, the dcnodatg.p_to_v function will prompt you interactively for any parameters that you did not include when invoking it.
 
 ##### To run interactively
 
