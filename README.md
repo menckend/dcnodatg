@@ -1,3 +1,10 @@
+[![Publish Docs](https://github.com/menckend/dcnodatg/actions/workflows/publish-docs.yml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-docs.yml)
+
+[![Publish stable release to PyPi.org](https://github.com/menckend/dcnodatg/actions/workflows/publish-release-to-pypi.yaml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-release-to-pypi.yaml)
+
+[![Publish test release to test.pypi.org](https://github.com/menckend/dcnodatg/actions/workflows/publish-commits-to-pypi-test.yaml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-commits-to-pypi-test.yaml)
+
+
 # Preamble
 
 I wrote this package (dcnodatg) specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.  (Also, to teach myself how to write/publish Python packages, but *really* for modeling Arista switches.)
