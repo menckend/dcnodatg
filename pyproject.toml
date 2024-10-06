@@ -3,7 +3,8 @@ requires = ["setuptools>=64", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-version_file = "dcnodatg/_version.py"
+#version_file = "dcnodatg/_version.py"
+fallback_version = 'beta-0.0.0'
 #version_scheme : str | Callable[[ScmVersion], str]
 
 [tool.setuptools.packages.find]
