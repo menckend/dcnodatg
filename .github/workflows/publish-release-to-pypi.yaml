@@ -1,4 +1,5 @@
-ame: Publish Release package to Pypi.org
+name: Publish Release package to Pypi.org
+
 on: push
 
 jobs:
