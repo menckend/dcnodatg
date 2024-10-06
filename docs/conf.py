@@ -21,26 +21,31 @@ author = 'Mencken Davidson'
 extensions = [
     'sphinx.ext.napoleon',
     'myst_parser',
-    'sphinx.ext.autodoc',  # Core Sphinx library for auto html doc generation from docstrings
-    'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
+#    'sphinx.ext.autodoc',  # Core Sphinx library for auto html doc generation from docstrings
+#    'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
     'sphinx.ext.intersphinx',  # Link to other project's documentation (see mapping below)
     'sphinx.ext.viewcode',  # Add a link to the Python source code for classes, functions etc.
-    'sphinx_autodoc_typehints' # Automatically document param types (less noise in class signature)
+#    'sphinx_autodoc_typehints' # Automatically document param types (less noise in class signature)
+    'autoapi.extension'
     ]
 
 source_suffix = [".rst",  ".md"]
 templates_path = ['_templates']
 exclude_patterns = ['_build', '_templates', 'Thumbs.db', '.DS_Store']
-autosummary_generate = True  # Turn on sphinx.ext.autosummary
-autosummary_imported_members = True
-autoclass_content = "both"  # Add __init__ doc (ie. params) to class summaries
+#autosummary_generate = True  # Turn on sphinx.ext.autosummary
+#autosummary_imported_members = True
+#autoclass_content = "both"  # Add __init__ doc (ie. params) to class summaries
 html_show_sourcelink = True  # Remove 'view source code' from top of page (for html, not python)
-autodoc_inherit_docstrings = False  # If no docstring, inherit from base class
-set_type_checking_flag = True  # Enable 'expensive' imports for sphinx_autodoc_typehints
-autodoc_typehints = "description"
-autodoc_class_signature = "separated"
+#autodoc_inherit_docstrings = False  # If no docstring, inherit from base class
+#set_type_checking_flag = True  # Enable 'expensive' imports for sphinx_autodoc_typehints
+#autodoc_typehints = "description"
+#autodoc_class_signature = "separated"
 html_theme = 'sphinx_rtd_theme'
 #html_theme = 'python_docs_theme'
+autoapi_dirs = ['../dcnodatg/']
+autoapi_type = "python"
+
+
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 #if not on_rtd:  # only import and set the theme if we're building docs locally
@@ -69,3 +74,5 @@ napoleon_use_rtype = True
 napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
+
+autoapi_template_dir = "_templates/autoapi"

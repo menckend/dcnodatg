@@ -2,15 +2,9 @@
    :hidden:
 
    Home <self>
-   Python Module Documentation <_autosummar>
+   ...
+   autoapi/index
 
 .. include:: ../README.md
   :parser: myst_parser.docutils_
 
-
-.. autosummary::
-   :toctree: _autosummary
-   :template: custom-module-template.rst
-   :recursive:
-
-   mypackage
