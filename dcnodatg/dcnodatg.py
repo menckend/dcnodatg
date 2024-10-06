@@ -9,9 +9,7 @@ import sys
 from getpass import getpass
 import pyeapi
 import requests
-import gns3_worker
-import eos_poller
-
+from dcnodatg import gns3_worker, eos_poller
 
 def read_file(file_to_read: str) -> list:
     """Open a file and return its contents as a list of strings
