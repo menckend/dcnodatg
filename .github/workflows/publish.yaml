@@ -26,10 +26,8 @@ jobs:
         path: dist/
 
   publish-to-pypi:
-    if: ${{ ! startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on non-tagged commits
+    if: ${{  startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits
     #if: startsWith(github.ref, 'nevermatch')    
-    env:
-      SETUPTOOLS_SCM_PRETEND_VERSION : '1.2.3test'
     name: >-
       Publish Python istribution to PyPI
     needs:
@@ -94,7 +92,7 @@ jobs:
         --repo '${{ github.repository }}'
 
   publish-to-testpypi:
-    if: startsWith(github.ref, 'refs/nevermatch/')  # only publish to PyPI on tag pushes
+    if: ${{  startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits
 
     name: Publish Python distribution to TestPyPI
     needs:
@@ -105,6 +103,9 @@ jobs:
       name: testpypi
       url: https://test.pypi.org/p/dcnodatg
 
+    env:
+      SETUPTOOLS_SCM_PRETEND_VERSION : '1.2.3test'
+  
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
 
