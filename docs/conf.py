@@ -44,6 +44,15 @@ html_theme = 'sphinx_rtd_theme'
 #html_theme = 'python_docs_theme'
 autoapi_dirs = ['../dcnodatg/']
 autoapi_type = "python"
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "imported-members",
+]
+autoapi_template_dir = "_templates/autoapi"
+autodoc_typehints = "signature"
 
 
 
@@ -75,4 +84,3 @@ napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
 
-autoapi_template_dir = "_templates/autoapi"

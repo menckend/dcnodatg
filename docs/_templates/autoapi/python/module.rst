@@ -1,3 +1,4 @@
+{% import 'macros.rst' as macros %}
 {% if obj.display %}
    {% if is_own_page %}
 {{ obj.id }}
@@ -112,12 +113,11 @@ Classes
                   {% endif %}
 .. autoapisummary::
 
-                  {% for klass in visible_classes %}
-   {{ klass.id }}
-                  {% endfor %}
+#                  {% for klass in visible_classes %}
+#   {{ klass.id }}
+#                  {% endfor %}
+                  {{ macros.auto_summary(visible_classes, title="Classes") }}
                {% endif %}
-
-
             {% endif %}
             {% set visible_functions = visible_children|selectattr("type", "equalto", "function")|list %}
             {% if visible_functions %}
@@ -140,7 +140,6 @@ Functions
    {{ function.id }}
                   {% endfor %}
                {% endif %}
-
 
             {% endif %}
             {% set this_page_children = visible_children|rejectattr("type", "in", own_page_types)|list %}
