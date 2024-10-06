@@ -25,16 +25,16 @@ extensions = [
     'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
     'sphinx.ext.intersphinx',  # Link to other project's documentation (see mapping below)
     'sphinx.ext.viewcode',  # Add a link to the Python source code for classes, functions etc.
-    'sphinx_autodoc_typehints', # Automatically document param types (less noise in class signature)
+    'sphinx_autodoc_typehints' # Automatically document param types (less noise in class signature)
     ]
 
 source_suffix = [".rst",  ".md"]
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', '_templates', 'Thumbs.db', '.DS_Store']
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 autosummary_imported_members = True
 autoclass_content = "both"  # Add __init__ doc (ie. params) to class summaries
-html_show_sourcelink = False  # Remove 'view source code' from top of page (for html, not python)
+html_show_sourcelink = True  # Remove 'view source code' from top of page (for html, not python)
 autodoc_inherit_docstrings = False  # If no docstring, inherit from base class
 set_type_checking_flag = True  # Enable 'expensive' imports for sphinx_autodoc_typehints
 autodoc_typehints = "description"
