@@ -1,5 +1,6 @@
+ame: Publish to test.pypi
+
 on: push
-if: ${{ ! startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits
 jobs:
   build:
     if: ${{ ! startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits

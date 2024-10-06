@@ -1,4 +1,4 @@
-name: Deploy Static Pages
+name: Publish Docs
 
 on:
   push:
