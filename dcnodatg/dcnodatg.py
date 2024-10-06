@@ -410,4 +410,6 @@ if __name__ == '__main__':
         else:
             kwdict[splarg[0]] = splarg[1]
     kwdict['runtype'] = 'script'
+    import dcnodatg.gns3_worker
+    import dcnodatg.eos_poller
     p_to_v(**kwdict)

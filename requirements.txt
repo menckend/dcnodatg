@@ -1,6 +1,0 @@
-pyeapi
-docker
-build
-asyncio
-requests
-aiohttp

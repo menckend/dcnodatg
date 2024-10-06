@@ -32,17 +32,18 @@ I wrote this package (dcnodatg) specifically to assist in *fast/low-effort* mode
           -  Avoiding the need for dcnodatg to run *on* the gns3 server
   - Creates the connections between the GNS3/cEOS nodes, mirroring all inter-switch connections discovered in LLDP tables
 
-## Requirements
+## What you'll need
 
 ### Python
 
-- The dcnodatg project was written using Python 3.12.  I haven't tested it with any other versions.
-- The host running the dcnodat module will need to have Python and the packages listed in requirements.txt installed
-
-If you want to invoke dcnodatg programmatically as a python module:
-
-- install it with pip:
-  - 'pip install dcnodatg'
+- The dcnodatg project was written using Python 3.12.
+  - I haven't tested it with any other versions.
+- The host running the dcnodatg packages will need to have Python and the packages listed in the dependencies section of pyproject.toml installed
+- Once Python is installed, use pip to install either the test or "stable" version of dcnodatg (which will install its dependencies as well):
+  - For the test version:
+    - 'pip install -i https://test.pypi.org/simple/ --no-cache --user --extra-index-url https://pypi.org/simple dcnodatg'
+  - For the "real" version:
+    -  'pip install --user dcnodatg'
 
 ### GNS3 server
 
@@ -65,11 +66,12 @@ All switches that you will be modeling will need to have:
 
 ### Prep
 
-- Put a copy of  dcnodatg.py where your Python interpreter can get at it
+- Have Python and the dcnodatg package installed on the host that will run dcnodatg
 - Have your login credentials for your production switches handy
 - Make sure that your production switches can receive eAPI connections from your GNS3 server
-- Optionally, create a file named "input-switch-list" in the same directory that you installed the .py files
-  - Populate 'input-switch-list' with the names of the switches that you want to model in gns3
+- Optionally, create a file named "input-switch-list"
+  -   - Populate 'input-switch-list' with the names of the switches that you want to model in gns3
+      -   One switch name per line (no quotes or commas)
 
 ### Parameter/argument list
 
@@ -105,14 +107,22 @@ dcnodatg uses the following arguments (passed as keyword pairs):
 
 #### As a Python script
 
-You'll need to install dcnodatg with pip or find some other way to make the modules in dcnodatg accessible to your interpreter.  When run as a script, the dcnodatg.p_to_v function will prompt you interactively for any parameters that you did not include when invoking it.
+Installing dcnodatg via pip will save you the effor of installing the additional dependencies list in pyproject.toml, but you can also just grab the contents of the dcnodatg folder [directly from the git repository](https://github.com/menckend/dcnodatg/tree/main/dcnodatg) and store them on the host you'll run them from.
+
+You'll also need to move the "dcnod-cli.py" file *up* one level in the directory structure from the dcnodatg folder after copying the entire folder to your host.  This is to work around "goofiness" with regards to how Python treats namespaces when accessing Python code as a "script" vs accessing it "as a module."
+
+To actually run the utility, you'll enter the following command:
+
+```
+python [path-to]dcnod-cli.py'
+```
 
 ##### To run interactively
 
 Enter:
 
 ```bash
-python [path-to]/dcnodatg.py
+python [path-to]dcnod-cli.py'
 ```
 
 As dcnodatg executes, you will be prompted to respond with values for all of the parameters/arguments. No quotes or delimiters should be required as you enter the values.
@@ -136,7 +146,7 @@ As dcnodatg executes, you will be prompted to respond with values for all of the
 Enter:  
 
 ```python
-python [path-to]/dcnodatg.py [arguments]
+python [path-to]dcnod-cli.py [arguments]
 ```
 
 The arguments are keyword/value pairs, in the form of:
@@ -151,12 +161,12 @@ The arguments can be entered in any order, separate by a space.  Examples of eac
 username= 'mynameismud'
 passwd= 'mypasswordisalsomud'
 servername= 'gns3server.menckend.com'
-switchlist= 'sw1.menckend.com sw2.menckend.com sw3.menckend.com'
+switchlist= 'sw1.menckend.com sw2 sw3 sw4.menckend.com'
 filename= './switchlist.txt'
 prjname= 'dcnodatg-project-dujour'
 ```
 
-Remember that the switchlist and filename arguments are mutually exclusive, if you include both, dcnodatg will exit.
+Remember that the switchlist and filename arguments are mutually exclusive, if you pass *both*, dcnodatg will exit.
 
 An example of a fully-argumented invocation would be:
 
@@ -166,10 +176,10 @@ python ./dcnodatg.py username='fakeid' passwd='b@dp@ssw0rd' servername='gn3serve
 
 ##### As a Python module
 
-Install dcnodatg with pip  ('pip install dcnodatg') and include an import statement ('import dcnodatg') in your python module. E.g.
+Install dcnodatg with pip as described above and include an import statement ('import dcnodatg') in your python module. E.g.
 
 ```python
-import dcnodatg
+from dcnodatg import dcnodatg
 
 sn='gns3server.bibbity.bobbity.boo'
 un='myuserid'
@@ -179,3 +189,6 @@ sl=['switch1.internal', 'switch15.internal', 'switch1.menckend.com']
 
 dcnodatg.p_to_v(username=sn, passwd=pw, servername=sn, switchlist=sl, prjname=prjn)
 ```
+
+.. note::
+  The 'switchlist' parameter, when dcnodatg is being accessed as a module is a dict structure, and the formatting in the example above is mandatory when specifying the switchlist data as a kwarg.
