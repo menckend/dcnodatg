@@ -2,6 +2,9 @@ on: push
 
 jobs:
   build:
+    environment:
+      name: pypi
+      url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
     name: Build distribution
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +48,9 @@ jobs:
     - name: Publish distribution to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
   github-release:
+    environment:
+      name: pypi
+      url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
     name: >-
       Sign the Python distribution with Sigstore
       and upload them to GitHub Release
