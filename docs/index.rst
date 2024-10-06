@@ -1,7 +1,7 @@
 .. toctree::
    :hidden:
 
-   Home/README <self>
+   Home <self>
    Python Module Documentation <_autosummary/dcnodatg>
 
 .. include:: ../README.md
