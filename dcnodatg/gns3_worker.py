@@ -5,7 +5,6 @@ Creates project and nodes on GNS3 server and then populates their configuration.
 import asyncio
 from io import BytesIO
 import tarfile
-import json
 import requests
 import aiohttp
 import docker
