@@ -1,3 +1,9 @@
+'''This is a wrapper script for dcnodatg to allow it be be invoked from outside of the 
+Python interpreter.  To use it, copy the contents of the dcnodatg folder to the host you
+will run it from.  Then move the dcnod-cli.py file *up* one level, so that is is in the 
+same directory as the dcnodatg folder.  Refer to the docs for additional details.'''
+
+
 import dcnodatg
 from dcnodatg import dcnodatg
 import sys
