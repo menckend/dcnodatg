@@ -4,5 +4,3 @@
    :recursive:
 
    dcnodatg
-   eos_poller
-   gns3_worker
