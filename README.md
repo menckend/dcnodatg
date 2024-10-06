@@ -190,5 +190,5 @@ sl=['switch1.internal', 'switch15.internal', 'switch1.menckend.com']
 dcnodatg.p_to_v(username=sn, passwd=pw, servername=sn, switchlist=sl, prjname=prjn)
 ```
 
-.. note::
-  The 'switchlist' parameter, when dcnodatg is being accessed as a module is a dict structure, and the formatting in the example above is mandatory when specifying the switchlist data as a kwarg.
+> [!IMPORTANT]  
+> The 'switchlist' parameter, when dcnodatg is being accessed as a module is a dict structure, and the formatting in the example above is mandatory when specifying the switchlist data as a kwarg.
