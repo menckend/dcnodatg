@@ -36,14 +36,14 @@ jobs:
       url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
-      steps:
-      - name: Download all the dists
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-      - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
   github-release:
     name: >-
       Sign the Python distribution with Sigstore
