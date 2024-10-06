@@ -54,6 +54,9 @@ autoapi_options = [
 autoapi_template_dir = "_templates/autoapi"
 autodoc_typehints = "signature"
 
+html_css_files = [
+    "css/custom.css",
+]
 
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
@@ -84,3 +87,10 @@ napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
 
+def contains(seq, item):
+    return item in seq
+
+def prepare_jinja_env(jinja_env) -> None:
+    jinja_env.tests["contains"] = contains
+
+autoapi_prepare_jinja_env = prepare_jinja_env
