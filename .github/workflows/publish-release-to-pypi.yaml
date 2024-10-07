@@ -50,6 +50,7 @@ jobs:
     - name: Publish distribution to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
   github-release:
+    if: startsWith(github.ref, 'nevermatch')    
     environment:
       name: pypi
       url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
