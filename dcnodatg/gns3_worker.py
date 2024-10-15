@@ -72,27 +72,27 @@ async def gns3_nodes_create_async(servername_in: str, gns3_url_in: str, sw_vals_
         # Loop through the switches and create them in the GNS3 project
         for sw_val_ctr, sw_val in enumerate(sw_vals_in):
             looped_template_id = requests.post(gns3_url_in + 'templates/' + sw_val[7]
-                                               + '/duplicate', timeout=5
+                                               + '/duplicate', timeout=15
                                                ).json()['template_id']
             # Put request to change the # of interfaces of the temporary template
             requests.put(gns3_url_in + 'templates/' + looped_template_id,
-                         json={'adapters': int(sw_val[6]) + 2}, timeout=5)
+                         json={'adapters': int(sw_val[6]) + 2}, timeout=15)
             # Request to instantiate a new node using the temporary template
             newnodeoutput = requests.post(gns3_url_in + 'projects/' + prj_id_in +
-                                          '/templates/' + sw_val[7], timeout=5,
+                                          '/templates/' + sw_val[7], timeout=15,
                                           json={'x': nodex, 'y': nodey})
             # Capture the GNS3 node_id of the virtual-switch we just created
             sw_val[8] = newnodeoutput.json()['node_id']
             # Request to delete the temporary template
-            requests.delete(gns3_url_in + 'templates/' + looped_template_id, timeout=5)
+            requests.delete(gns3_url_in + 'templates/' + looped_template_id, timeout=15)
 
             # Change the name of the GNS3 node that we just created
             requests.put(gns3_url_in + 'projects/' + prj_id_in + '/nodes/' + sw_val[8],
-                         timeout=5, json={'name': sw_val[0]})
+                         timeout=15, json={'name': sw_val[0]})
             # Capture the docker_id of the virtual-switch we just created  (container
             # re-spawned when we changed its name)
             sw_val[9] = requests.get(gns3_url_in + 'projects/' + prj_id_in + '/nodes/' +
-                                     sw_val[8], timeout=5).json()['properties']['container_id']
+                                     sw_val[8], timeout=15).json()['properties']['container_id']
             # Copy the modified sw_val objects contents back into sw_vals_in[sw_val_ctr]
             sw_vals_in[sw_val_ctr] = sw_val
             # Increment x/y coordinates for the *next* switch to be instantiated
@@ -102,7 +102,7 @@ async def gns3_nodes_create_async(servername_in: str, gns3_url_in: str, sw_vals_
                 nodey = nodey + 250
             # Tell GNS3 to start the node that represents the current switch
             requests.post(gns3_url_in + 'projects/' + prj_id_in + '/nodes/' + sw_val[8]
-                          + '/start', timeout=5)
+                          + '/start', timeout=15)
             # Rebuild the switch-config from its current state as a list of individual
             # lines to a single string with newline characters.
             my_string_to_go = ''
