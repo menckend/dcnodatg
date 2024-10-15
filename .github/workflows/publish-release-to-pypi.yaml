@@ -31,10 +31,8 @@ jobs:
         name: python-package-distributions
         path: dist/
   publish-to-pypi:
-    #if: ${{  startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits
-    #if: startsWith(github.ref, 'nevermatch')    
     name: >-
-      Publish Python istribution to PyPI
+      Publish Python distribution to PyPI
     needs:
     - build
     runs-on: ubuntu-latest
