@@ -367,6 +367,7 @@ the production switches: ')
 
     # Set GNS3 URL
     gns3_url = 'http://'+servername+':3080/v2/'
+    gns3_url_noapi = 'http://'+servername+':3080/static/web-ui/server/1/projects/'
 
     # Get all of the docker image templates from the GNS3 server so we can figure out
     # which template_id value maps to a specific EOS version when we start building
@@ -395,7 +396,7 @@ the production switches: ')
     gns3_worker.invoker(servername, gns3_url, switch_vals,
                         allconfigs, gnsprj_id, connections_to_make)
     # Done!
-    return 'GNS3 project URL is: ' + gns3_url + 'projects/' + gnsprj_id
+    return 'GNS3 project URL is: ' + gns3_url_noapi + gnsprj_id
 
 
 if __name__ == '__main__':
