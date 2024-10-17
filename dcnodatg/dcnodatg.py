@@ -367,7 +367,7 @@ the production switches: ')
 
     # Set GNS3 URL
     gns3_url = 'http://'+servername+':3080/v2/'
-    gns3_url_noapi = 'http://'+servername+':3080/static/web-ui/server/1/projects/'
+    gns3_url_noapi = 'http://'+servername+':3080/static/web-ui/server/1/project/'
 
     # Get all of the docker image templates from the GNS3 server so we can figure out
     # which template_id value maps to a specific EOS version when we start building
