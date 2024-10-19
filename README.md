@@ -1,4 +1,4 @@
-[![Publish Docs](https://github.com/menckend/dcnodatg/actions/workflows/publish-docs.yml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-docs.yml) [![Publish stable release to PyPi.org](https://github.com/menckend/dcnodatg/actions/workflows/publish-release-to-pypi.yaml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-release-to-pypi.yaml) [![Publish to test.pypi](https://github.com/menckend/dcnodatg/actions/workflows/publish-commits-to-pypi-test.yaml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-commits-to-pypi-test.yaml)
+[![Publish Docs](https://github.com/menckend/dcnodatg/actions/workflows/publish-docs.yml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-docs.yml) [![Publish stable release to PyPi.org]([![Publish Release package to Pypi.org](https://github.com/menckend/dcnodatg/actions/workflows/publish-release-to-pypi.yaml/badge.svg)](https://github.com/menckend/dcnodatg/actions/workflows/publish-release-to-pypi.yaml))
 
 
 # Preamble
