@@ -396,7 +396,7 @@ the production switches: ')
     gns3_worker.invoker(servername, gns3_url, switch_vals,
                         allconfigs, gnsprj_id, connections_to_make)
     # Done!
-    return 'GNS3 project URL is: ' + gns3_url_noapi + gnsprj_id
+    return 'GNS3 project URL is: [' + gns3_url_noapi + gnsprj_id + '](' + gns3_url_noapi + gnsprj_id + ')'
 
 
 if __name__ == '__main__':
