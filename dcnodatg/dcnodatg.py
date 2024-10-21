@@ -396,8 +396,7 @@ the production switches: ')
     gns3_worker.invoker(servername, gns3_url, switch_vals,
                         allconfigs, gnsprj_id, connections_to_make)
     # Done!
-    return gns3_url_noapi + gnsprj_id + 'static/web-ui/server/1/project/'+ gnsprj_id
-
+    return gns3_url_noapi + gnsprj_id
 if __name__ == '__main__':
     kwdict = {}
     for arg in sys.argv[1:]:
