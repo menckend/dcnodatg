@@ -396,7 +396,13 @@ the production switches: ')
     gns3_worker.invoker(servername, gns3_url, switch_vals,
                         allconfigs, gnsprj_id, connections_to_make)
     # Done!
+
+    # Close the GNS3 project
+    gnsprj_close = requests.post(gns3_url + 'projects' + 'project_id' + 'close'
+    
     return gns3_url_noapi + gnsprj_id
+
+
 if __name__ == '__main__':
     kwdict = {}
     for arg in sys.argv[1:]:
