@@ -4,6 +4,7 @@ on:
   release:
     branches:
       - 'test'
+      - '!**'
 jobs:
   build:
     environment:
