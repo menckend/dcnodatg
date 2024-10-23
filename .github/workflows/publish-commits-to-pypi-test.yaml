@@ -2,8 +2,10 @@ name: Publish to test.pypi
 
 on:
   release:
-    types: [published]
-    branches: ['!test']
+    types:
+      - published
+    branches:
+      - "!test"
 jobs:
   build:
     environment:
