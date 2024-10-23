@@ -1,11 +1,9 @@
 name: Publish to test.pypi
 
 on:
-  push:
+  release:
     branches:
       - 'test'
-    tags:
-      - test**
 jobs:
   build:
     environment:
