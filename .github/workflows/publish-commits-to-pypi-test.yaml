@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - 'test'
+    tags:
+      - test**
 jobs:
   build:
-    if: startsWith(github.ref, 'refs/tags/')
-    #if: ${{ startsWith(github.ref, 'refs/tags/') }}
-    #if: ${{ startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits from test branch
     environment:
       name: testpypi
       url: https://test.pypi.org/p/dcnodatg
@@ -34,7 +33,6 @@ jobs:
         name: python-package-distributions
         path: dist/
   publish-to-testpypi:
-    if: startsWith(github.ref, 'refs/tags/')
     environment:
       name: testpypi
       url: https://test.pypi.org/p/dcnodatg
