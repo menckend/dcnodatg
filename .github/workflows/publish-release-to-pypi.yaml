@@ -5,6 +5,7 @@ on:
     types: [published]
     branches:
       - main
+      - '!test'
 jobs:
   build:
     environment:
