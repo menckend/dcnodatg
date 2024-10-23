@@ -3,9 +3,9 @@ name: Publish to test.pypi
 on:
   push:
     branches:
-      - testtaker
+      - test
     tags:
-      - tst**
+      - bananapants
 jobs:
   build:
     environment:
