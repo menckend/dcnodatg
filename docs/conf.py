@@ -21,11 +21,11 @@ author = 'Mencken Davidson'
 extensions = [
     'sphinx.ext.napoleon',
     'myst_parser',
-#    'sphinx.ext.autodoc',  # Core Sphinx library for auto html doc generation from docstrings
-#    'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
+    'sphinx.ext.autodoc',  # Core Sphinx library for auto html doc generation from docstrings
+    'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
     'sphinx.ext.intersphinx',  # Link to other project's documentation (see mapping below)
     'sphinx.ext.viewcode',  # Add a link to the Python source code for classes, functions etc.
-#    'sphinx_autodoc_typehints' # Automatically document param types (less noise in class signature)
+    'sphinx_autodoc_typehints' # Automatically document param types (less noise in class signature)
     'autoapi.extension'
     ]
 
