@@ -1,4 +1,4 @@
-ename: Publish to test.pypi
+name: Publish to test.pypi
 
 on: push
 jobs:
