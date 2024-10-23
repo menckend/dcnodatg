@@ -1,11 +1,15 @@
 name: Publish to test.pypi
 
 on:
-  release:
-    types:
-      - published
+  push:
+    # Sequence of patterns matched against refs/heads
     branches:
-      - "!test"
+      - 'test'
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'tst**'
+
+
 jobs:
   build:
     environment:
