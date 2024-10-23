@@ -113,9 +113,9 @@ Classes
                   {% endif %}
 .. autoapisummary::
 
-#                  {% for klass in visible_classes %}
-#   {{ klass.id }}
-#                  {% endfor %}
+                  {% for klass in visible_classes %}
+   {{ klass.id }}
+                  {% endfor %}
                   {{ macros.auto_summary(visible_classes, title="Classes") }}
                {% endif %}
             {% endif %}
