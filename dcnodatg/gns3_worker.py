@@ -62,7 +62,7 @@ async def gns3_nodes_create_async(servername_in: str, gns3_url_in: str, sw_vals_
     async with aiohttp.ClientSession() as session:
         # Set x/y coordinates for the first node on the project
         nodex = -1000
-        nodey = -1000
+        nodey = -500
         # Create docker client for RESTful API
         d_clnt = docker.DockerClient(base_url='tcp://'+servername_in+':2375')
         # Initialize single string version of switch config from allconf_in
