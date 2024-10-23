@@ -1,7 +1,10 @@
 name: Publish to test.pypi
 
-on: push
-  branches: test
+on:
+  push:
+    branches:
+      - test
+      - 'releases/**'
 jobs:
   build:
     if: ${{ startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits from test branch
@@ -32,7 +35,6 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
- 
   publish-to-testpypi:
     if: ${{ startsWith(github.ref, 'refs/tags/') }} # only publish to test.pypi.org on tagged commits from test branch
     environment:
