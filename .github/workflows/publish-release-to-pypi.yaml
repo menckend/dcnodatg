@@ -2,6 +2,7 @@ name: Publish Release package to Pypi.org
 
 on:
   release:
+    types: [published]
     branches:
       - main
 jobs:
