@@ -398,7 +398,7 @@ the production switches: ')
     # Done!
 
     # Close the GNS3 project
-    gnsprj_close = requests.post(gns3_url + 'projects' + 'project_id' + 'close'
+    gnsprj_close = requests.post(gns3_url + 'projects' + 'project_id' + 'close')
     
     return gns3_url_noapi + gnsprj_id
 
