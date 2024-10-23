@@ -8,6 +8,10 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../dcnodatg/'))
 
+
+
+
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -32,15 +36,12 @@ extensions = [
 source_suffix = [".rst",  ".md"]
 templates_path = ['_templates']
 exclude_patterns = ['_build', '_templates', 'Thumbs.db', '.DS_Store']
-#autosummary_generate = True  # Turn on sphinx.ext.autosummary
-#autosummary_imported_members = True
-#autoclass_content = "both"  # Add __init__ doc (ie. params) to class summaries
 html_show_sourcelink = False  # Remove 'view source code' from top of page (for html, not python)
-#autodoc_inherit_docstrings = False  # If no docstring, inherit from base class
-#set_type_checking_flag = True  # Enable 'expensive' imports for sphinx_autodoc_typehints
-#autodoc_typehints = "description"
-#autodoc_class_signature = "separated"
 html_theme = 'sphinx_rtd_theme'
+autodoc_typehints = "signature"
+autoapi_template_dir = "_templates/autoapi"
+#autodoc_class_signature = "separated"
+autoapi_own_page_level = "function"
 autoapi_dirs = ['../dcnodatg/']
 autoapi_type = "python"
 autoapi_options = [
@@ -50,15 +51,12 @@ autoapi_options = [
     "show-module-summary",
     "imported-members",
 ]
-autoapi_template_dir = "_templates/autoapi"
-autodoc_typehints = "signature"
 
 html_css_files = [
     "css/custom.css",
 ]
 
-
-on_rtd = os.environ.get("READTHEDOCS", None) == "True"
+#on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 #if not on_rtd:  # only import and set the theme if we're building docs locally
 #    import sphinx_rtd_theme
 #    html_theme = "sphinx_rtd_theme"
@@ -67,7 +65,6 @@ on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
 
 html_static_path = ['_static']
 
