@@ -30,7 +30,7 @@ jobs:
         name: python-package-distributions
         path: dist/
   publish-to-testpypi:
-    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'test')
+    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'tst')
     environment:
       name: testpypi
       url: https://test.pypi.org/p/dcnodatg
