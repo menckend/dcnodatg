@@ -5,7 +5,7 @@ on:
     types: ['published']
 jobs:
   build:
-        if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'main')
+    if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'main')
     environment:
       name: pypi
       url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
