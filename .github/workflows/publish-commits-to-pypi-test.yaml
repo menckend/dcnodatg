@@ -1,11 +1,10 @@
 name: Publish to test.pypi
 
 on:
-  release:
-    types: ['published']
+  push
 jobs:
   build:
-    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'test')
+    if: contains(github.ref, '/tags/') && contains(github.ref_name, 't')
     environment:
       name: testpypi
       url: https://test.pypi.org/p/dcnodatg
