@@ -1,11 +1,10 @@
-name: Publish Release package to Pypi.org
+name: Publish to test.pypi
 
 on:
-  release:
-    types: ['published']
+  push
 jobs:
   build:
-    if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'main')
+    if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'test')
     environment:
       name: pypi
       url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
@@ -31,8 +30,7 @@ jobs:
         name: python-package-distributions
         path: dist/
   publish-to-pypi:
-        if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'main')
-
+    if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'test')
     name: >-
       Publish Python distribution to PyPI
     needs:
@@ -52,7 +50,7 @@ jobs:
     - name: Publish distribution to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
   github-release:
-        if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'main')
+    if: contains(github.ref, '/tags/') && contains(github.event.base_ref, 'test')
     environment:
       name: pypi
       url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
