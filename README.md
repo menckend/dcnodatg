@@ -2,10 +2,10 @@
 
 I wrote this package (dcnodatg) specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.  (Also, to teach myself how to write/publish Python packages, but *really* for modeling Arista switches.)
 
-- Documentation at: [https://menckend.github.io/dcnodatg/](https://menckend.github.io/dcnodatg/)
-- Repository at: [https://github.com/menckend/dcnodatg](https://github.com/menckend/dcnodatg)
-- (Latest) Package at: [https://pypi.org/project/dcnodatg/](https://pypi.org/project/dcnodatg/)
-- (testing) Package at: [https://test.pypi.org/project/dcnodatg/](https://test.pypi.org/project/dcnodatg/)
+- [Documentation](https://menckend.github.io/dcnodatg/)
+- [Repository](https://github.com/menckend/dcnodatg)
+- [(Latest) Package](https://pypi.org/project/dcnodatg/)
+- [(testing) Package](https://test.pypi.org/project/dcnodatg/)
 
 ## What it does
 

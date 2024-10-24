@@ -30,6 +30,7 @@ extensions = [
     'sphinx.ext.intersphinx',  # Link to other project's documentation (see mapping below)
     'sphinx.ext.viewcode',  # Add a link to the Python source code for classes, functions etc.
     'sphinx_autodoc_typehints', # Automatically document param types (less noise in class signature)
+    'sphinx.ext.autodoc.typehints',
     'autoapi.extension'
     ]
 
@@ -38,7 +39,7 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', '_templates', 'Thumbs.db', '.DS_Store']
 html_show_sourcelink = False  # Remove 'view source code' from top of page (for html, not python)
 html_theme = 'sphinx_rtd_theme'
-autodoc_typehints = "signature"
+autodoc_typehints = "description"
 autoapi_template_dir = "_templates/autoapi"
 #autodoc_class_signature = "separated"
 autoapi_own_page_level = "function"
@@ -95,7 +96,7 @@ html_theme_options = {
     # Toc options
     'collapse_navigation': True,
     'sticky_navigation': True,
-    'navigation_depth': 5,
+    'navigation_depth': -1,
     'includehidden': True,
     'titles_only': False
 }
