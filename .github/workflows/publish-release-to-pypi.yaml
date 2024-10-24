@@ -4,7 +4,7 @@ on:
   release:
 jobs:
   build:
-    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'test')
+    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'main')
     environment:
       name: pypi
       url: https://pypi.org/p/dcnodatg  # Replace <package-name> with your PyPI project name
@@ -30,7 +30,7 @@ jobs:
         name: python-package-distributions
         path: dist/
   publish-to-pypi:
-    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'test')
+    if: contains(github.ref, '/tags/') && contains(github.ref_name, 'main')
     name: >-
       Publish Python distribution to PyPI
     needs:
