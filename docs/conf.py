@@ -23,15 +23,15 @@ author = 'Mencken Davidson'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.napoleon',
+    'autoapi.extension'
     'myst_parser',
     'sphinx.ext.autodoc',  # Core Sphinx library for auto html doc generation from docstrings
+    'sphinx.ext.autodoc.typehints',
     'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
     'sphinx.ext.intersphinx',  # Link to other project's documentation (see mapping below)
+    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',  # Add a link to the Python source code for classes, functions etc.
     'sphinx_autodoc_typehints', # Automatically document param types (less noise in class signature)
-    'sphinx.ext.autodoc.typehints',
-    'autoapi.extension'
     ]
 
 source_suffix = [".rst",  ".md"]
@@ -42,7 +42,7 @@ html_theme = 'sphinx_rtd_theme'
 autodoc_typehints = "description"
 autoapi_template_dir = "_templates/autoapi"
 #autodoc_class_signature = "separated"
-autoapi_own_page_level = "function"
+autoapi_own_page_level = "module"
 autoapi_dirs = ['../dcnodatg/']
 autoapi_type = "python"
 autoapi_options = [
