@@ -23,7 +23,7 @@ author = 'Mencken Davidson'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'autoapi.extension'
+    'autoapi.extension',
     'myst_parser',
     'sphinx.ext.autodoc',  # Core Sphinx library for auto html doc generation from docstrings
     'sphinx.ext.autodoc.typehints',
