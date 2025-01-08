@@ -11,6 +11,7 @@ import pyeapi
 import requests
 from dcnodatg import gns3_worker, eos_poller
 
+
 def read_file(file_to_read: str) -> list:
     """Open a file and return its contents as a list of strings
 
@@ -18,6 +19,11 @@ def read_file(file_to_read: str) -> list:
     ----------
     file_to_read : str
         The path of the file to be read
+
+    Returns
+    -------
+    list of lines : list
+        The contents of the file as a list of strings
     """
     # Open the file in read mode
     opened_file = open(file_to_read, "r")
@@ -42,60 +48,6 @@ def list_search(list_to_search: list, item_to_find: str) -> bool:
         if val == item_to_find:
             return True
     return False
-
-
-def get_switch_data(switch: str, uname: str, passw: str) -> tuple[list, list, list]:
-    """Connect to a switch and gets the data that we want from it
-
-    Parameters
-    ---------
-    switch : str
-        The network switch to be interrogated
-    uname : str
-        The username credential for authenticating to the switch
-    passw : str
-        The password credential for authenticating to the switch
-
-    Returns
-    -------
-    this_sw_vals : list
-        Values of the switch that we're interested in
-    this_sw_lldp_nbrs : list
-        The switch's LLDP neighbors table
-    this_sw_cfg : list
-        The switch's startup configuration
-        """
-
-    # Clear any existing pyeapi.client.config
-    pyeapi.client.config.clear()
-    # Build the pyeapi.client.config object required for connecting to the switch
-    pyeapi.client.config.add_connection(switch, host=switch, transport='https',
-                                        username=uname, password=passw)
-    # Connect to the switch
-    node = pyeapi.connect_to(switch)
-    # Get JSON-formatted results of several 'show...' commands
-    eos_output = node.enable(("show version", "show lldp neighbors",
-                              "show lldp local-info"), format="json")
-    # Pluck the specific bits out data we want from the "show" cmds' output
-    eos_output_model = eos_output[0]["result"]["modelName"]
-    eos_output_ver = eos_output[0]["result"]["version"]
-    eos_output_mac = eos_output[0]["result"]["systemMacAddress"]
-    eos_output_serial = eos_output[0]["result"]["serialNumber"]
-    eos_output_lldpname = eos_output[2]["result"]["systemName"]
-    # Create this_switch_data list to return (include empty indecesfor later)
-    this_sw_vals = ([switch, eos_output_model, eos_output_ver, eos_output_mac,
-                    eos_output_serial, eos_output_lldpname, '', '', '', '', '', ''])
-    # Create this_sw_lldpnbrs list to return
-    this_sw_lldpnbrs = []
-    for value in eos_output[1]["result"]["lldpNeighbors"]:
-        this_sw_lldpnbrs.append([str(eos_output_lldpname), str(value["port"]),
-                                 str(value["neighborDevice"]),
-                                 str(value["neighborPort"])])
-    # Create this_sw_cfg list to return
-    this_sw_cfg = []
-    this_sw_cfg = node.startup_config.splitlines()
-    # Return our results
-    return (this_sw_vals, this_sw_lldpnbrs, this_sw_cfg)
 
 
 def count_ether_interfaces(tmp_switch_config: list) -> int:
@@ -399,7 +351,6 @@ the production switches: ')
 
     # Close the GNS3 project
     gnsprj_close = requests.post(gns3_url + 'projects' + 'project_id' + 'close')
-    
     return gns3_url_noapi + gnsprj_id
 
 
