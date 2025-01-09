@@ -1,15 +1,14 @@
 """dcnodatg module/script
 
-Gathers and parses run-state details from a list of Arista
-network switches.  Then creates a GNS3 virtual-lab project in which the
-interrogated devices are emulated."""
+Entry-point module for package.  Gathers and parses run-state details
+ from a list of Arista network switches.  Then creates a GNS3 virtual-
+ lab project in which the interrogated devices are emulated."""
 
 
 import sys
 from getpass import getpass
-import pyeapi
 import requests
-from dcnodatg import gns3_worker, eos_poller
+from dcnodatg import gns3_worker, eos_poller, eos_sanitizer
 
 
 def read_file(file_to_read: str) -> list:
@@ -50,130 +49,6 @@ def list_search(list_to_search: list, item_to_find: str) -> bool:
     return False
 
 
-def count_ether_interfaces(tmp_switch_config: list) -> int:
-    """Accept a list of lines representing a switch config and return the number of
-    Ethernet interfaces the corresponding cEOS container will need
-
-    Parameters
-    ---------
-    tmp_switch_config : list
-        List of lines of a switch's configuration
-
-    Returns
-    -------
-    this_sw_intf_count : int
-        The number of Ethernet interfaces the cEOS container version of the switch will\
-         need
-    """
-    my_ethercount = 0
-    for line in tmp_switch_config:
-        # We're only counting single interfaces (not the breakout interfaces)
-        if (line.startswith('interface Ethernet') and (not (line.endswith('/2') or
-                                                            line.endswith('/3') or
-                                                            line.endswith('/4')))):
-            my_ethercount += 1
-    return my_ethercount
-
-
-def arista_ceos_sanitizer(sw_config_in: list, ether_count_in: int, system_mac_in:
-                          str) -> list:
-    """Accept a list of lines representing a switch config and return the number of
-    Ethernet interfaces the corresponding cEOS container will need
-
-    Parameters
-    ---------
-    sw_config_in : list
-        List of lines of a switch's configuration
-    invalid_starts : list
-        List of strings the cEOS configs should NOT start with, and we will scrub
-    ether_count_in : int
-        The number of "Ethernet" interfaces in the original switch config
-    system_mac_in : str
-        The system MAC address of the original switch
-
-    Returns
-    -------
-    sw_config_out : list
-        Switch configuration (as a list of lines) that has been sanitized for cEOS
-    """
-    # List of global-config commands that we should comment out for cEOS compatibility
-    # and lab environments in general
-    badstarts = ['radius',
-                 'username',
-                 'aaa',
-                 'ip radius',
-                 'hardware speed',
-                 'queue',
-                 'server ',
-                 'ip radius',
-                 'ntp server',
-                 'daemon TerminAttr',
-                 '   exec /usr/bin/TerminAttr']
-
-    # Replace all references to 'Management1' in the config with 'Ethernet__' (where
-    #  __ is the switch's interface-count + 1)
-    mgt_port_int = int(ether_count_in) + 1
-    mgt_port_str = str(mgt_port_int)
-
-    # Loop through the lines in each switch's configuration
-    for linect, line in enumerate(sw_config_in):
-        # Replace the Management1 interface name with an extra Ethernet interface
-        sw_config_in[linect] = line.replace('Management1', 'Ethernet' + mgt_port_str)
-        # Eiminate config lines the begin with any of the "invalid_starts"
-        for oopsie in badstarts:
-            if sw_config_in[linect].startswith(oopsie):
-                # Can't just delete the un-wanted lines, that would screw up
-                # the iteration through the list. Better to just prepend with a '!'
-                sw_config_in[linect] = "!removed_for_cEOS-lab| " + sw_config_in[linect]
-        # Get rid of '...netN/2|3|4' interface config sections altogether
-        # (can't have them getting converted to ../netN and their vestigial config
-        # overwriting the actual interface config
-        spurious_interface = False
-        # Loop through all of the switches
-        # Check to see if the current config line is a 'spurious' interface
-        spurious_interface = sw_config_in[linect].startswith(
-            'interface Ethernet') and ('/2' in sw_config_in[linect] or '/3'
-                                       in sw_config_in[linect] or '/4' in
-                                       sw_config_in[linect])
-        if spurious_interface:
-            # Loop through the lines in the spurious interface's config section
-            # and comment them out by prepending with '!'
-            next_sec = False
-            shortcount = linect
-            # Stop commenting out lines when we get to the end of the config
-            # section (marked by a line consisting of '!')
-            next_sec = False
-            while not next_sec:
-                if sw_config_in[shortcount] == '!':
-                    next_sec = True
-                sw_config_in[shortcount] = '!' + sw_config_in[shortcount]
-                shortcount += 1
-        # Convert interface names from  '...netn/m' to '...netn'
-        if sw_config_in[linect].startswith('interface Ethernet'):
-            sw_config_in[linect] = sw_config_in[linect].split('/')[0]
-
-    # Create an event-handler section to append to the configuration to
-    # use the original switch's MAC address
-    system_mac_config_snippet = ['', '', '', '', '', '', '']
-    system_mac_config_snippet[0] = 'event-handler onStartup'
-    system_mac_config_snippet[1] = ' trigger on-boot'
-    system_mac_config_snippet[2] = ' action bash'
-    system_mac_config_snippet[4] = '  echo $var_sysmac > /mnt/flash/system_mac_address'
-    system_mac_config_snippet[5] = '  truncate -s -1 /mnt/flash/system_mac_address'
-    system_mac_config_snippet[6] = '  EOF'
-    # Remove the last line ('end') of the config  and append the system_mac_config
-    # snippet(with the REAL switch's MAC address) before adding the final 'end' back
-    # This will help our lab switches look more like the prod switches, but will
-    # also work around the system-mac MLAG bug on cEOS
-    poppedline = sw_config_in.pop(len(sw_config_in[linect])-1)
-    system_mac_config_snippet[3] = '      var_sysmac=\'' + \
-        system_mac_in + '\''
-    for sysmacline in range(len(system_mac_config_snippet)):
-        sw_config_in.append(system_mac_config_snippet[sysmacline])
-        sw_config_in.append(poppedline)
-    return sw_config_in
-
-
 def p_to_v(**kwargs):
     """Pull switch run-state data, massage it, and turn it into a GNS3 lab
 
@@ -196,7 +71,6 @@ def p_to_v(**kwargs):
     -------
     result : str
     """
-    # Lists we'll use later
     # List that we'll use to store the switch's vital statistics for modeling later
     # switch_vals[n][0]= switch name received as input argument
     # switch_vals[n][1]= switch model
@@ -208,10 +82,15 @@ def p_to_v(**kwargs):
     # switch_vals[n][7]= GNS3 image-template ID
     # switch_vals[n][8]= GNS3 node-ID
     # switch_vals[n][9]= Docker container ID
+    # switch_vals[n][10]= switch vendor/platform
+    # switch_vals[n][11]= QEMU VM ID
+
     # List of LLDP neighbor details we'll use to build a list of connections for GNS3
     connections_to_make = []
+
     # Nested list for holding the configs of ALL the switches
     allconfigs = []
+
     # A list for holding a list of gns3 template_id values and corresponding EOS \
     # version values
     image_map = []
@@ -223,6 +102,7 @@ def p_to_v(**kwargs):
     servername = ''
     prj_name = ''
     run_type = 'module'
+
     # Pull any expected (and received) arguments from kwargs into their recipient
     # objects
     if 'filename' in kwargs:
@@ -248,12 +128,11 @@ def p_to_v(**kwargs):
                 break
             switchlist.append(line)
     if (filename != '') and (switchlist != []):
-        print("Don't pass both filename_arg AND switchlist_arg; choose one or the \
-other.")
+        print("Don't pass both filename_arg AND switchlist_arg; choose one or the other.")
         exit(1)
     if prj_name == '':
-        prj_name = input('Enter a value to use for the GNS project name when modeling \
-the production switches: ')
+        prj_name = input('Enter a value to use for the GNS project name when modeling the \
+                         production switches: ')
     if servername == '':
         servername = input('Enter the name of the GNS3 server: ')
     # Read the input switch-list file, if a filename was provided
@@ -270,16 +149,14 @@ the production switches: ')
 
     # Call eos_poller.invoker to poll the Arista switches
     switch_vals, connections_to_make, allconfigs = eos_poller.invoker(switchlist,
-                                                                      username,
-                                                                      passwd, run_type)
-    # Get the number of ethernet interfaces from each switch's config and store for l8r
-    for i, val in enumerate(switchlist):
-        ether_count = count_ether_interfaces(allconfigs[i])
-        switch_vals[i][6] = ether_count
+                                                                      username, passwd,
+                                                                      run_type)
 
-    # Loop through all those configs and clean them up for life as a cEOS container
+    # Loop through all those configs and clean them up for life in a virtual lab,
+    # while also grabbing the interface count for later
     for i, val in enumerate(allconfigs):
-        allconfigs[i] = arista_ceos_sanitizer(val, switch_vals[i][6], switch_vals[i][3])
+        allconfigs[i], switch_vals[i][6] = eos_sanitizer.e_to_c(val, switch_vals[i][3])
+
     # Create a list of the LLDP local-IDs used by our switches
     our_lldp_ids = []
     for val in switch_vals:
@@ -350,7 +227,7 @@ the production switches: ')
     # Done!
 
     # Close the GNS3 project
-    gnsprj_close = requests.post(gns3_url + 'projects' + 'project_id' + 'close')
+    requests.post(gns3_url + 'projects' + 'project_id' + 'close')
     return gns3_url_noapi + gnsprj_id
 
 

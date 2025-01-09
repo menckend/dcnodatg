@@ -10,7 +10,8 @@ import aiohttp
 import docker
 
 
-def invoker(servername_in: str, gns3_url_in: str, sw_vals_in: list, allconf_in: list, prj_id_in: str, connx_in: list):
+def invoker(servername_in: str, gns3_url_in: str, sw_vals_in: list,
+            allconf_in: list, prj_id_in: str, connx_in: list):
     """Add nodes to the new GNS3 project and push a copy of the configuration files
     to their substrate docker containers.  Use asyncio/aoihttp to let post requests
     with long completion time run in the background usign cooperative multitasking
@@ -132,7 +133,7 @@ async def gns3_nodes_create_async(servername_in: str, gns3_url_in: str, sw_vals_
             # Assign the HTTP post request for async execution
             tasks.append(asyncio.ensure_future(gns3_post(session, url, 'post')))
             await asyncio.sleep(0.2)
-        responses = await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks)
         switch_vals_out = sw_vals_in
         return switch_vals_out
 
@@ -157,7 +158,8 @@ async def gns3_connx_create_async(servername_in: str, gns3_url_in: str, sw_vals_
 
     async with aiohttp.ClientSession() as sesh2:
         # Loop through connections_to_make and make the connections between switches
-        print("Instantiating the connections between switches in the GNS3 project (might take a minute):")
+        print("Instantiating the connections between switches in the GNS3 \
+              project (might take a minute):")
         cnx_urls = []
         cnx_json = []
         for n, val in enumerate(connx_in):
@@ -174,11 +176,15 @@ async def gns3_connx_create_async(servername_in: str, gns3_url_in: str, sw_vals_
             cnx_urls.append('')
             cnx_urls[n] = gns3_url_in + 'projects/' + prj_id_in + '/links'
             cnx_json.append({})
-            cnx_json[n] = {'nodes': [{'adapter_number': int(a_node_adapter_nbr), 'node_id': a_node_id, 'port_number': 0}, {'adapter_number': int(b_node_adapter_nbr), 'node_id': b_node_id, 'port_number': 0}]}
+            cnx_json[n] = {'nodes': [{'adapter_number': int(a_node_adapter_nbr),
+                                      'node_id': a_node_id, 'port_number': 0},
+                                     {'adapter_number': int(b_node_adapter_nbr),
+                                      'node_id': b_node_id, 'port_number': 0}]}
         # Assign the HTTP post request for async execution
         tasks_2 = []
         for n, url in enumerate(cnx_urls):
-            tasks_2.append(asyncio.ensure_future(gns3_post(sesh2, str(url), 'post', jsondata=cnx_json[n])))
+            tasks_2.append(asyncio.ensure_future(gns3_post(sesh2, str(url),
+                           'post', jsondata=cnx_json[n])))
             await asyncio.sleep(0.2)
         responses = await asyncio.gather(*tasks_2)
         return responses
