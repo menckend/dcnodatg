@@ -14,7 +14,7 @@ def e_to_c(switchConfigIn: list, sysMacIn: str) -> list:
     ---------
     switchConfigIn : list
         List of lines of a switch's configuration
-    systMacIn : str
+    sysMacIn : str
         The system MAC address of the original switch"""
 
     # List of global-config commands that we should comment out for \
@@ -88,12 +88,12 @@ def count_ether_interfaces(switchConfigIn: list, linect: str) -> int:
 
     Parameters
     ---------
-    switchConfig : list
+    switchConfigIn : list
         List of lines of a switch's configuration
 
     Returns
     -------
-    this_sw_intf_count : int
+    my_ethercount : int
         The number of Ethernet interfaces the cEOS container version of the switch will\
          need
     """
@@ -117,8 +117,14 @@ def applySysMac(switchConfigIn: list, sysMacIn: str) -> list:
     switchConfigIn : list
         List of lines of a switch's configuration
     sysMacIn : str
-        The system MAC address of the original switch"""
+        The system MAC address of the original switch
 
+    Returns
+    -------
+    switchConfigIn : list
+        List of lines of a switch's configuration
+    """
+    
     # Create an event-handler section to append to the configuration to
     # use the original switch's MAC address
     sysMacSnip = ['', '', '', '', '', '', '']

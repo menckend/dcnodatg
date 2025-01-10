@@ -24,7 +24,7 @@ def invoker(servername_in: str, gns3_url_in: str, sw_vals_in: list,
         The URL to be posted to the GNS3 server
     sw_vals_in : list
         List of needed data about the switches to be emulated
-    all_conf_in : list
+    allconf_in : list
         List-of-lists holding all of the switch's configurations
     connx_in : list
         List of connections we need to make between the GNS3 nodes we're creating

@@ -102,7 +102,7 @@ async def main(switchlist_in2: list, uname_in2: str, passwd_in2: str,
 
 def get_sw_data(switch3: str, uname_in3: str, passwd_in3: str, sw_cntr3_in: int
                 ) -> tuple[list, list, list]:
-    """Connect to a switch and gets the data that we want from it
+    """Connect to a switch and get the data that we want from it
 
     Parameters
     ---------
