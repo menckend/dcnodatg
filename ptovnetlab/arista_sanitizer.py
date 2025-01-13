@@ -5,7 +5,7 @@ For modifying the configuration extracted from an Arista hardware
  container in a lab environment"""
 
 
-def e_to_c(switchConfigIn: list, sysMacIn: str) -> list:
+def eos_to_ceos(switchConfigIn: list, sysMacIn: str) -> list:
     """Module entry-point.  Accepts an Arista EOS switch config
      and related paraand returns, returning a cEOS lab-ready
      version of the configuration
@@ -36,14 +36,15 @@ def e_to_c(switchConfigIn: list, sysMacIn: str) -> list:
     etherCount = count_ether_interfaces(switchConfigIn)
 
     # Replace all references to 'Management1' in the config with \
-    # 'Ethernet__' (where __ is the switch's interface-count + 1)
-    mgt_port_int = int(etherCount) + 1
-    mgt_port_str = str(mgt_port_int)
+    # 'Ethernet0'
+    #mgt_port_int = int(etherCount) + 1
+    mgt_port_str = 'Management0'
 
     # Loop through the lines in each switch's configuration
     for linect, line in enumerate(switchConfigIn):
         # Replace the Management1 interface name with an extra Ethernet interface
-        switchConfigIn[linect] = line.replace('Management1', 'Ethernet' + mgt_port_str)
+        switchConfigIn[linect] = line.replace('Management1', mgt_port_str)
+        switchConfigIn[linect] = line.replace('Management0', mgt_port_str)
         # Eiminate config lines the begin with any of the "badStarts" strings
         for oopsie in badStarts:
             if switchConfigIn[linect].startswith(oopsie):
@@ -81,7 +82,7 @@ def e_to_c(switchConfigIn: list, sysMacIn: str) -> list:
     return switchConfigIn, etherCount
 
 
-def count_ether_interfaces(switchConfigIn: list, linect: str) -> int:
+def count_ether_interfaces(switchConfigIn: list) -> int:
     """Accept a list of lines representing a switch config and return \
     the number of Ethernet interfaces the corresponding cEOS \
     container will need

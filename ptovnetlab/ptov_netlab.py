@@ -1,4 +1,4 @@
-"""dcnodatg module/script
+"""vnlOnDemand module/script
 
 Entry-point module for package.  Gathers and parses run-state details
  from a list of Arista network switches.  Then creates a GNS3 virtual-
@@ -8,7 +8,7 @@ Entry-point module for package.  Gathers and parses run-state details
 import sys
 from getpass import getpass
 import requests
-from dcnodatg import gns3_worker, eos_poller, eos_sanitizer
+from ptovnetlab import arista_poller, arista_sanitizer, gns3_worker
 
 
 def read_file(file_to_read: str) -> list:
@@ -49,6 +49,16 @@ def list_search(list_to_search: list, item_to_find: str) -> bool:
     return False
 
 
+def predelimiter(string, delimiter):
+  """Returns the section of a string before the first instance of a delimiter."""
+
+  index = string.find(delimiter)
+  if index == -1:
+    return string  # Delimiter not found, return the whole string
+  else:
+    return string[:index]
+
+
 def p_to_v(**kwargs):
     """Pull switch run-state data, massage it, and turn it into a GNS3 lab
 
@@ -71,7 +81,7 @@ def p_to_v(**kwargs):
     -------
     result : str
     """
-    # List that we'll use to store the switch's vital statistics for modeling later
+    # Guide for which values are held in which indices of switch_vals
     # switch_vals[n][0]= switch name received as input argument
     # switch_vals[n][1]= switch model
     # switch_vals[n][2]= EOS version
@@ -85,13 +95,13 @@ def p_to_v(**kwargs):
     # switch_vals[n][10]= switch vendor/platform
     # switch_vals[n][11]= QEMU VM ID
 
-    # List of LLDP neighbor details we'll use to build a list of connections for GNS3
+    # Initializing list of LLDP neighbor details we'll use to build a list of connections for GNS3
     connections_to_make = []
 
-    # Nested list for holding the configs of ALL the switches
+    # Initializing nested list for holding the configs of ALL the switches
     allconfigs = []
 
-    # A list for holding a list of gns3 template_id values and corresponding EOS \
+    # Initializing a list for holding a list of gns3 template_id values and corresponding EOS \
     # version values
     image_map = []
     # Set default values for all anticipated arguments
@@ -147,15 +157,15 @@ def p_to_v(**kwargs):
     if passwd == '':
         passwd = getpass('Enter password for Arista EOS login: ')
 
-    # Call eos_poller.invoker to poll the Arista switches
-    switch_vals, connections_to_make, allconfigs = eos_poller.invoker(switchlist,
+    # Call eos_poller.invoker to get runstate from the Arista switches
+    switch_vals, connections_to_make, allconfigs = arista_poller.invoker(switchlist,
                                                                       username, passwd,
                                                                       run_type)
 
     # Loop through all those configs and clean them up for life in a virtual lab,
     # while also grabbing the interface count for later
     for i, val in enumerate(allconfigs):
-        allconfigs[i], switch_vals[i][6] = eos_sanitizer.e_to_c(val, switch_vals[i][3])
+        allconfigs[i], switch_vals[i][6] = arista_sanitizer.eos_to_ceos(val, switch_vals[i][3])
 
     # Create a list of the LLDP local-IDs used by our switches
     our_lldp_ids = []
@@ -176,23 +186,22 @@ def p_to_v(**kwargs):
             if i[2]+i[3] == j[0]+j[1]:
                 connections_to_make.remove(j)
 
-    # Clean up "management1" in the connections_to_make list (using the highest
-    # available ethernet interface instead (we added an extra interface to each
-    # node when we created it and later in the allconfigs table)
+    # Clean up "management1" in the connections_to_make list (using eth0
+    #  instead.  Prod Switch management1 interface is presented in cEOS CLI
+    #  as Management0, and Docker presents it to the container as eth0, which
+    # is how it presents in GNS3
 
     for i, val in enumerate(connections_to_make):
-        # connections_to_make[i][0] = val[0].lower()
         connections_to_make[i][1] = val[1].lower()
-        # connections_to_make[i][2] = val[2].lower()
         connections_to_make[i][3] = val[3].lower()
-        if val[1] == 'management1':
+        if val[1].startswith('management'):
             for j, val2 in enumerate(switch_vals):
                 if val[0] == val2[5]:
-                    connections_to_make[i][1] = 'ethernet' + str(int(val2[6]) + 1)
-        if val[3] == 'management1':
+                    connections_to_make[i][1] = 'ethernet0'
+        if val[3].startswith('management'):
             for j, val2 in enumerate(switch_vals):
                 if val[2] == val2[5]:
-                    connections_to_make[i][3] = 'ethernet' + str(int(val2[6]) + 1)
+                    connections_to_make[i][3] = 'ethernet0'
 
     # Set GNS3 URL
     gns3_url = 'http://'+servername+':3080/v2/'
@@ -201,7 +210,7 @@ def p_to_v(**kwargs):
     # Get all of the docker image templates from the GNS3 server so we can figure out
     # which template_id value maps to a specific EOS version when we start building
     # our instances
-    r = requests.get(gns3_url + 'templates', timeout=10)
+    r = requests.get(gns3_url + 'templates', timeout=20)
     for x in r.json():
         if x['template_type'] == 'docker':
             image_map.append([x['template_id'], x['image']])
@@ -212,12 +221,13 @@ def p_to_v(**kwargs):
     #  matching entry in image_map
     for i in range(len(switch_vals)):
         for j in range(len(image_map)):
-            fudgedupeosverion = 'ceos:' + switch_vals[i][2].lower()
+            # strip any trailing garbage from the EOS version reported by the switch API
+            fudgedupeosverion = ('ceos:' + predelimiter(switch_vals[i][2].lower(), '-'))
             if fudgedupeosverion == image_map[j][1].lower():
                 switch_vals[i][7] = image_map[j][0]
     # create a new project with provided name and grab the project_id
     gnsprj_id = requests.post(gns3_url + 'projects', json={'name': prj_name},
-                              timeout=10).json()['project_id']
+                              timeout=20).json()['project_id']
     # Grab the templates object from the GNS server so we can crawl through it
     # templ_qry_resp = requests.get(gns3_url + 'templates')
 
@@ -243,6 +253,6 @@ if __name__ == '__main__':
         else:
             kwdict[splarg[0]] = splarg[1]
     kwdict['runtype'] = 'script'
-    import dcnodatg.gns3_worker
-    import dcnodatg.eos_poller
+    import ptovnetlab.gns3_worker
+    import ptovnetlab.arista_poller
     p_to_v(**kwdict)

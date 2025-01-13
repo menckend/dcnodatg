@@ -1,4 +1,4 @@
-"""eos_poller.py
+"""eosPoller.py
 
 Uses asyncio.to_thread and gather functions to poll multiple switches concurrently """
 
@@ -124,11 +124,10 @@ def get_sw_data(switch3: str, uname_in3: str, passwd_in3: str, sw_cntr3_in: int
     """
 
     # Clear any existing pyeapi.client.config
-    # pyeapi.client.config.clear()
+    pyeapi.client.config.clear()
     # Build the pyeapi.client.config object required for connecting to the switch
-    # pyeapi.client.config.add_connection(switch3, host=switch3, transport='https',
-    #                                    username=uname_in3, password=passwd_in3)
-
+    pyeapi.client.config.add_connection(switch3, host=switch3, transport='https',
+                                        username=uname_in3, password=passwd_in3)
     # Connect to the switch
     node = pyeapi.connect_to(switch3)
     # Get JSON-formatted results of several 'show...' commands
