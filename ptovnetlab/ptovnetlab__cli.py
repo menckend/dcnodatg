@@ -4,7 +4,7 @@ will run it from.  Then move the vnlOnDemandCli.py file *up* one level, so that 
  same directory as the vnlOnDemand folder.  Refer to the docs for additional details.'''
 
 
-import ptovnetlab.ptov_netlab as ptov_netlab
+import ptovnetlab.ptovnetlab as ptovnetlab
 import sys
 
 if __name__ == '__main__':
@@ -19,4 +19,4 @@ if __name__ == '__main__':
         else:
             kwdict[splarg[0]] = splarg[1]
     kwdict['runtype'] = 'script'
-    ptov_netlab.p_to_v(**kwdict)
+    ptovnetlab.p_to_v(**kwdict)
