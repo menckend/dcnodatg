@@ -1,6 +1,6 @@
 # This Project is Deprecated
 
-I've deprecated this package and gave it a fresh life as "ptovnetlab" (a more ecumenical name, since I'm hoping to folder in other NOSes and virt-lab platforms.)
+I've deprecated this package and gave it a fresh life as "[ptovnetlab](https://github.com/menckend/ptovnetlab)" (a more ecumenical name, since I'm hoping to folder in other NOSes and virt-lab platforms.)
 
 - [Documentation](https://menckend.github.io/ptovnetlab/)
 - [Repository](https://github.com/menckend/ptovnetlab)
