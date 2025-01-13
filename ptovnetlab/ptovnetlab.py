@@ -1,4 +1,4 @@
-"""vnlOnDemand module/script
+"""ptovnetlab module/script
 
 Entry-point module for package.  Gathers and parses run-state details
  from a list of Arista network switches.  Then creates a GNS3 virtual-
