@@ -8,18 +8,16 @@ I've deprecated this package and gave it a fresh life as "ptovnetlab" (a more ec
 - [(testing) Package](https://test.pypi.org/project/ptovnetlab/)
 
 
-~~
-# Preamble
-~~
 
-~~I wrote this package (ptovnetlab) specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.  (Also, to teach myself how to write/publish Python packages, but *really* for modeling Arista switches.)  I'd like to scale it up to supporting addditional virtual-lab platforms and network-device vendors' equipment, but all things have to start *somewhere*.
+<s># Preamble
+
+I wrote this package (ptovnetlab) specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.  (Also, to teach myself how to write/publish Python packages, but *really* for modeling Arista switches.)  I'd like to scale it up to supporting addditional virtual-lab platforms and network-device vendors' equipment, but all things have to start *somewhere*.
 
 - [Documentation](https://menckend.github.io/dcnodatg/)
 - [Repository](https://github.com/menckend/dcnodatg)
 - [(Latest) Package](https://pypi.org/project/ptovnetlab/)
 - [(testing) Package](https://test.pypi.org/project/ptovnetlab/)
-~~
-~~
+
 ## What it does
 
 - Grabs startup configuration, version info, and lldp neighbor information from a list of Arista switches
@@ -211,4 +209,4 @@ ptovnetlab.p_to_v(username=sn, passwd=pw, servername=sn, switchlist=sl, prjname=
 > [!IMPORTANT]  
 > The 'switchlist' parameter, when ptovnetlab is being accessed as a module is a dict structure, and the formatting in the example above is mandatory when specifying the switchlist data as a kwarg.
 
-~~          
+</s>
