@@ -6,11 +6,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../dcnodatg/'))
-
-
-
-
+sys.path.insert(0, os.path.abspath('../ptovnetlab/'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -43,7 +39,7 @@ autodoc_typehints = "description"
 autoapi_template_dir = "_templates/autoapi"
 #autodoc_class_signature = "separated"
 autoapi_own_page_level = "module"
-autoapi_dirs = ['../dcnodatg/']
+autoapi_dirs = ['../ptovnetlab/']
 autoapi_type = "python"
 autoapi_options = [
     "members",

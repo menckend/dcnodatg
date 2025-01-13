@@ -2,8 +2,8 @@
 
 I wrote this package (ptovnetlab) specifically to assist in *fast/low-effort* modeling of a production EVPN Layer-3 Leaf & Spine physical network of Arista switches in a pre-existing GNS3 server, using Arista cEOS docker images.  (Also, to teach myself how to write/publish Python packages, but *really* for modeling Arista switches.)  I'd like to scale it up to supporting addditional virtual-lab platforms and network-device vendors' equipment, but all things have to start *somewhere*.
 
-- [Documentation](https://menckend.github.io/ptovnetlab/)
-- [Repository](https://github.com/menckend/ptovnetlab)
+- [Documentation](https://menckend.github.io/dcnodatg/)
+- [Repository](https://github.com/menckend/dcnodatg)
 - [(Latest) Package](https://pypi.org/project/ptovnetlab/)
 - [(testing) Package](https://test.pypi.org/project/ptovnetlab/)
 
